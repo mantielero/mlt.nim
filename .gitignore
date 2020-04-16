@@ -1,0 +1,3 @@
+src/wrapper/
+examples/
+!examples/*.nim
