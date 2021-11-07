@@ -1,0 +1,39 @@
+#ifdef C2NIM
+#dynlib mltlib
+#prefix mlt_
+#cdecl
+#skipinclude
+#def MLT_FRAME_PROPERTIES( frame )		( &( frame )->parent )
+#def MLT_FRAME_SERVICE_STACK( frame )	( ( frame )->stack_service )
+#def MLT_FRAME_IMAGE_STACK( frame )		( ( frame )->stack_image )
+#def MLT_FRAME_AUDIO_STACK( frame )		( ( frame )->stack_audio )
+
+#def RGB2YUV_601_SCALED(r, g, b, y, u, v)\
+  y = ((263*r + 516*g + 100*b) >> 10) + 16;\
+  u = ((-152*r - 300*g + 450*b) >> 10) + 128;\
+  v = ((450*r - 377*g - 73*b) >> 10) + 128;
+
+#def RGB2UV_601_SCALED(r, g, b, u, v)\
+  u = ((-152*r - 300*g + 450*b) >> 10) + 128;\
+  v = ((450*r - 377*g - 73*b) >> 10) + 128;
+
+
+#def YUV2RGB_601_SCALED( y, u, v, r, g, b ) \
+  r = ((1192 * ( y - 16 ) + 1634 * ( v - 128 ) ) >> 10 ); \
+  g = ((1192 * ( y - 16 ) - 832 * ( v - 128 ) - 401 * ( u - 128 ) ) >> 10 ); \
+  b = ((1192 * ( y - 16 ) + 2066 * ( u - 128 ) ) >> 10 ); \
+  r = r < 0 ? 0 : r > 255 ? 255 : r; \
+  g = g < 0 ? 0 : g > 255 ? 255 : g; \
+  b = b < 0 ? 0 : b > 255 ? 255 : b;
+
+/** A convenience macro to create an entry point for service registration. */
+#def MLT_REPOSITORY void mlt_register( mlt_repository repository )
+
+/** A convenience macro to a register service in a more declarative manner. */
+#def MLT_REGISTER( type, service, symbol  ) ( mlt_repository_register( repository, (type), (service), ( mlt_register_callback )(symbol) ) )
+
+/** A convenience macro to a register metadata in a more declarative manner. */
+#def MLT_REGISTER_METADATA( type, service, callback, data ) ( mlt_repository_register_metadata( repository, (type), (service), ( mlt_metadata_callback )(callback), (data) ) )
+
+
+#endif

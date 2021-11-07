@@ -1,3 +1,4 @@
 src/wrapper/
-examples/
+
+examples/*
 !examples/*.nim
