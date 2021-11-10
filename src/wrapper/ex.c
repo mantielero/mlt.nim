@@ -1,18 +1,21 @@
-// gcc ex.c -o a -I/usr/include/mlt-7 -l mlt-7 
+// gcc ex.c -o ex -lX11 -lmlt-7 
 #include <stdio.h>
 #include <unistd.h>
-#include <framework/mlt.h>
+#include <mlt-7/framework/mlt.h>
 
 int main( int argc, char *argv[] )
 {
     // Initialise the factory
-    if ( mlt_factory_init( NULL ) == 0 )
+    if ( mlt_factory_init( NULL ) != 0 )
     {
+        mlt_profile p = mlt_profile_init(NULL);
+
         // Create the default consumer
-        mlt_consumer hello = mlt_factory_consumer( NULL, "sdl2", NULL );
+        mlt_consumer hello = mlt_factory_consumer( p, "sdl2", NULL );
 
         // Create via the default producer
-        mlt_producer world = mlt_factory_producer( NULL, "color", "red" );
+        char* col = "color:red";
+        mlt_producer world = mlt_factory_producer( p, NULL, "color:red" );
 
         // Connect the producer to the consumer
         mlt_consumer_connect( hello, mlt_producer_service( world ) );

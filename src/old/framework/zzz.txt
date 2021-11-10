@@ -1,2 +1,0 @@
-[jose@mountain framework]$ c2nim mlt_log.h 
-/home/jose/src/mlt-master/src/framework/mlt_log.h(77, 77) Error: expected ';'

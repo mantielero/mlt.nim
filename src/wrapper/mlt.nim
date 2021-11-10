@@ -1,6 +1,6 @@
-# Generated @ 2021-11-06T23:06:23+01:00
+# Generated @ 2021-11-08T20:25:01+01:00
 # Command line:
-#   /home/jose/.nimble/pkgs/nimterop-0.6.13/nimterop/toast --preprocess -m:c --recurse --includeDirs+=/usr/include/mlt-7/framework --pnim --dynlib=libmlt-7.so --symOverride=mlt_property_s,mlt_event_struct,mlt_field_s,mlt_deque_s,mlt_geometry_s,mlt_geometry_item_s,mlt_repository_s,mlt_cache_s,mlt_cache_item_s,mlt_animation_s,playlist_entry_s,locale_t,mlt_tokeniser --nim:/home/jose/.choosenim/toolchains/nim-1.4.8/bin/nim --pluginSourcePath=/home/jose/.cache/nim/nimterop/cPlugins/nimterop_1891033265.nim /usr/include/mlt-7/framework/mlt.h -o /home/jose/src/nimlang/mlt/src/wrapper2/mlt.nim
+#   /home/jose/.nimble/pkgs/nimterop-0.6.13/nimterop/toast --preprocess -m:c --recurse --passL=-lX11 --includeDirs+=/usr/include/mlt-7/framework --pnim --dynlib=libmlt-7.so --symOverride=mlt_property_s,mlt_event_struct,mlt_field_s,mlt_deque_s,mlt_geometry_s,mlt_geometry_item_s,mlt_repository_s,mlt_cache_s,mlt_cache_item_s,mlt_animation_s,playlist_entry_s,locale_t,mlt_tokeniser,pthread_mutex_t --nim:/home/jose/.choosenim/toolchains/nim-1.6.0/bin/nim --pluginSourcePath=/home/jose/.cache/nim/nimterop/cPlugins/nimterop_279031550.nim /usr/include/mlt-7/framework/mlt.h -o /home/jose/src/mlt.nim/src/wrapper/mlt.nim
 
 # const 'GCC_VERSION' has unsupported value '(__GNUC__ * 10000 + __GNUC_MINOR__ * 100 + __GNUC_PATCHLEVEL__)'
 # const 'mlt_fopen' has unsupported value 'fopen'
@@ -57,6 +57,7 @@ type va_list* {.importc, header:"<stdarg.h>".} = object
 {.pragma: impmltDyn, dynlib: "libmlt-7.so".}
 {.experimental: "codeReordering".}
 {.passC: "-I/usr/include/mlt-7/framework".}
+{.passL: "-lX11".}
 defineEnum(mlt_image_format)
 defineEnum(mlt_audio_format)
 defineEnum(mlt_channel_layout)
@@ -260,7 +261,7 @@ const
   MLT_LOG_TIMINGS* = 44
   MLT_LOG_DEBUG* = 48
   LIBMLT_VERSION_MAJOR* = 7
-  LIBMLT_VERSION_MINOR* = 0
+  LIBMLT_VERSION_MINOR* = 2
   LIBMLT_VERSION_REVISION* = 0
   LIBMLT_VERSION_INT* = ((LIBMLT_VERSION_MAJOR shl
       typeof(LIBMLT_VERSION_MAJOR)(16)) +
@@ -277,6 +278,7 @@ type
   mlt_geometry_item_s = object
   mlt_property_s = object
   mlt_event_struct = object
+  pthread_mutex_t = object
   mlt_deque_s = object
   locale_t = cstring
   mlt_field_s = object
@@ -735,6 +737,7 @@ type
                              ##   Private
                              ## ```
     held*: cint
+    mutex*: pthread_mutex_t
 
   mlt_consumer_s* {.bycopy, impmltHdr, importc: "struct mlt_consumer_s".} = object
     parent*: mlt_service_s   ## ```
@@ -993,6 +996,10 @@ proc mlt_property_anim_set_rect*(self: mlt_property; value: mlt_rect;
 proc mlt_property_anim_get_rect*(self: mlt_property; fps: cdouble;
                                  locale: locale_t; position: cint; length: cint): mlt_rect {.
     importc, cdecl, impmltDyn.}
+proc mlt_property_set_properties*(self: mlt_property; properties: mlt_properties): cint {.
+    importc, cdecl, impmltDyn.}
+proc mlt_property_get_properties*(self: mlt_property): mlt_properties {.importc,
+    cdecl, impmltDyn.}
 proc mlt_animation_new*(): mlt_animation {.importc, cdecl, impmltDyn.}
 proc mlt_animation_parse*(self: mlt_animation; data: cstring; length: cint;
                           fps: cdouble; locale: locale_t): cint {.importc,
@@ -1462,27 +1469,34 @@ proc mlt_properties_from_utf8*(properties: mlt_properties; name_from: cstring;
     impmltDyn.}
 proc mlt_properties_to_utf8*(properties: mlt_properties; name_from: cstring;
                              name_to: cstring): cint {.importc, cdecl, impmltDyn.}
+proc mlt_properties_set_properties*(self: mlt_properties; name: cstring;
+                                    properties: mlt_properties): cint {.importc,
+    cdecl, impmltDyn.}
+proc mlt_properties_get_properties*(self: mlt_properties; name: cstring): mlt_properties {.
+    importc, cdecl, impmltDyn.}
+proc mlt_properties_get_properties_at*(self: mlt_properties; index: cint): mlt_properties {.
+    importc, cdecl, impmltDyn.}
   ## ```
-                                                                                  ##   \file mlt_deque.h
-                                                                                  ##    \brief double ended queue
-                                                                                  ##    \see mlt_deque_s
-                                                                                  ##   
-                                                                                  ##    Copyright (C) 2003-2014 Meltytech, LLC
-                                                                                  ##   
-                                                                                  ##    This library is free software; you can redistribute it and/or
-                                                                                  ##    modify it under the terms of the GNU Lesser General Public
-                                                                                  ##    License as published by the Free Software Foundation; either
-                                                                                  ##    version 2.1 of the License, or (at your option) any later version.
-                                                                                  ##   
-                                                                                  ##    This library is distributed in the hope that it will be useful,
-                                                                                  ##    but WITHOUT ANY WARRANTY; without even the implied warranty of
-                                                                                  ##    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-                                                                                  ##    Lesser General Public License for more details.
-                                                                                  ##   
-                                                                                  ##    You should have received a copy of the GNU Lesser General Public
-                                                                                  ##    License along with this library; if not, write to the Free Software
-                                                                                  ##    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
-                                                                                  ## ```
+                               ##   \file mlt_deque.h
+                               ##    \brief double ended queue
+                               ##    \see mlt_deque_s
+                               ##   
+                               ##    Copyright (C) 2003-2014 Meltytech, LLC
+                               ##   
+                               ##    This library is free software; you can redistribute it and/or
+                               ##    modify it under the terms of the GNU Lesser General Public
+                               ##    License as published by the Free Software Foundation; either
+                               ##    version 2.1 of the License, or (at your option) any later version.
+                               ##   
+                               ##    This library is distributed in the hope that it will be useful,
+                               ##    but WITHOUT ANY WARRANTY; without even the implied warranty of
+                               ##    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+                               ##    Lesser General Public License for more details.
+                               ##   
+                               ##    You should have received a copy of the GNU Lesser General Public
+                               ##    License along with this library; if not, write to the Free Software
+                               ##    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+                               ## ```
 proc mlt_deque_init*(): mlt_deque {.importc, cdecl, impmltDyn.}
 proc mlt_deque_count*(self: mlt_deque): cint {.importc, cdecl, impmltDyn.}
 proc mlt_deque_push_back*(self: mlt_deque; item: pointer): cint {.importc,
@@ -1859,7 +1873,7 @@ proc mlt_multitrack_track*(self: mlt_multitrack; track: cint): mlt_producer {.
                                ##    \brief abstraction for all transition services
                                ##    \see mlt_transition_s
                                ##   
-                               ##    Copyright (C) 2003-2015 Meltytech, LLC
+                               ##    Copyright (C) 2003-2021 Meltytech, LLC
                                ##   
                                ##    This library is free software; you can redistribute it and/or
                                ##    modify it under the terms of the GNU Lesser General Public

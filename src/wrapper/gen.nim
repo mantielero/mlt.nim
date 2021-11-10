@@ -38,10 +38,15 @@ cOverride:
     playlist_entry_s = object        
     locale_t = cstring  
     mlt_tokeniser = object
+    pthread_mutex_t = object
 #    property = object
 #    position = object
 
-cImport("/usr/include/mlt-7/framework/mlt.h", recurse = true, dynlib = mltlib, nimfile = "mlt.nim")             # Generate wrappers for header specified 
+cImport( "/usr/include/mlt-7/framework/mlt.h", 
+         recurse = true, 
+         dynlib = mltlib,
+         flags = "--passL=-lX11", 
+         nimfile = "mlt.nim")             # Generate wrappers for header specified 
 
 #cCompile("clib/src/*.c")      # Compile in any implementation source files
 
