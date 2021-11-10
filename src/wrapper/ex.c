@@ -11,10 +11,9 @@ int main( int argc, char *argv[] )
         mlt_profile p = mlt_profile_init(NULL);
 
         // Create the default consumer
-        mlt_consumer hello = mlt_factory_consumer( p, "sdl2", NULL );
+        mlt_consumer hello = mlt_factory_consumer( p, "sdl2", NULL ); // xgl, sdl, 
 
         // Create via the default producer
-        char* col = "color:red";
         mlt_producer world = mlt_factory_producer( p, NULL, "color:red" );
 
         // Connect the producer to the consumer

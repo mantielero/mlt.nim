@@ -1,7 +1,7 @@
-examples/*
-!examples/*.nim
 experiments/*
 src/wrapper/a
 src/wrapper/ex
 src/wrapper/ex02
 src/wrapper/gen
+examples/*
+!examples/*.nim
