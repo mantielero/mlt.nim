@@ -1,9 +1,7 @@
 # nim c -r ex02
 # https://www.mltframework.org/docs/framework/
 # https://cpp.hotexamples.com/es/examples/-/-/MLT_CONSUMER_PROPERTIES/cpp-mlt_consumer_properties-function-examples.html
-# MLT_CONSUMER=xml ./ex02
-{.passL: "-pthread".}# -pthread".}
-#{.passL:"-L /usr/lib/mlt-7 -lmltcore".}
+{.passL: "-pthread".}
 import mlt
 import os
 
@@ -19,8 +17,8 @@ if hello == nil:
     quit("""mlt_factory_consumer returned "nil"""")
 
 # Create via the default producer
-var color:cstring = "color:red".cstring
-var world:mlt_producer = mlt_factory_producer(p, nil, color)
+var clip = "avformat:/home/jose/Descargas/sygic.mp4".cstring
+var world:mlt_producer = mlt_factory_producer(p, nil, clip )
 
 # Connect the producer to the consumer
 if world == nil:
@@ -28,6 +26,9 @@ if world == nil:
 
 var res = mlt_consumer_connect( hello, mlt_producer_service( world ) )
 echo "mlt_consumer_Connect: " & $res
+#if res == 0:
+#    quit("""mlt_consumer_connect returned "nil"""")
+
 
 # Start the consumer
 res = mlt_consumer_start( hello )

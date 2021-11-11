@@ -2,8 +2,6 @@
 import mlt
 
 echo "Version"
-echo "int: ", versionGetInt()
-echo "major: ", versionGetMajor()
-echo "minor: ", versionGetMinor()
-echo "revision: ", versionGetRevision()
-echo "string: ", versionGetString()
+echo "int: ", getVersionAsInt()
+echo "tuple: ", getVersionAsTuple()
+echo "string: ", getVersionAsString()

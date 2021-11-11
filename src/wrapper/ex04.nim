@@ -19,8 +19,8 @@ if hello == nil:
     quit("""mlt_factory_consumer returned "nil"""")
 
 # Create via the default producer
-var color:cstring = "color:red".cstring
-var world:mlt_producer = mlt_factory_producer(p, nil, color)
+var world:mlt_producer = mlt_factory_producer(mlt_profile_init("avformat"), nil,
+                            "video4linux2:/dev/video1?width=320&height=240".cstring )
 
 # Connect the producer to the consumer
 if world == nil:
@@ -28,6 +28,9 @@ if world == nil:
 
 var res = mlt_consumer_connect( hello, mlt_producer_service( world ) )
 echo "mlt_consumer_Connect: " & $res
+#if res == 0:
+#    quit("""mlt_consumer_connect returned "nil"""")
+
 
 # Start the consumer
 res = mlt_consumer_start( hello )
