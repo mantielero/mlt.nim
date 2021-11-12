@@ -33,8 +33,9 @@ var filter = newFactoryFilter(p, "frei0r.pixeliz0r")
 
 set(filter, "BlockSizeX", 0.1 )
 set(filter, "BlockSizeY", 0.1 )
+filter["BlockSizeY"] = 0.2
 
-connect( hello, filter) #getService(filter) 
+connect( hello, filter) 
 connect( filter, getService(world) )
 
 

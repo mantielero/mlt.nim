@@ -1,11 +1,21 @@
 import ../wrapper/mlt
-import typs, os
+import typs, os, std/strformat
 
 
 
 
-proc set*(self:Properties; name:string, value:float) =
+proc set*(self:Properties; name:string; value:float) =
   let res = mlt_properties_set_double(self, name.cstring, value.cdouble)
+  if res > 0:
+    quit("""unable to set property "{name}" """)
+
+proc set*(self:Properties; name, value:string) =
+  let res = mlt_properties_set_string(self, name.cstring, value.cstring)
+  if res > 0:
+    quit("""unable to set property "{name}" """)
+
+proc `[]=`*[T:float|string](self:Properties; name:string; value:T) =
+  set(self, name, value)
 
 #[
 proc mlt_properties_init*(a1: mlt_properties; child: pointer): cint
@@ -28,8 +38,7 @@ proc mlt_properties_pass_list*(self: mlt_properties; that: mlt_properties;
 proc mlt_properties_set*(self: mlt_properties; name: cstring; value: cstring): cint
 proc mlt_properties_set_or_default*(self: mlt_properties; name: cstring;
                                     value: cstring; def: cstring): cint
-proc mlt_properties_set_string*(self: mlt_properties; name: cstring;
-                                value: cstring): cint
+
 proc mlt_properties_parse*(self: mlt_properties; namevalue: cstring): cint
 proc mlt_properties_get*(self: mlt_properties; name: cstring): cstring
 proc mlt_properties_get_name*(self: mlt_properties; index: cint): cstring
@@ -43,8 +52,7 @@ proc mlt_properties_set_int*(self: mlt_properties; name: cstring; value: cint): 
 proc mlt_properties_get_int64*(self: mlt_properties; name: cstring): int64
 proc mlt_properties_set_int64*(self: mlt_properties; name: cstring; value: int64): cint
 proc mlt_properties_get_double*(self: mlt_properties; name: cstring): cdouble
-proc mlt_properties_set_double*(self: mlt_properties; name: cstring;
-                                value: cdouble): cint
+
 proc mlt_properties_get_position*(self: mlt_properties; name: cstring): mlt_position
 proc mlt_properties_set_position*(self: mlt_properties; name: cstring;
                                   value: mlt_position): cint
