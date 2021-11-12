@@ -7,42 +7,39 @@
 import mlt
 import os
 
-var f:mlt_repository = mlt_factory_init("/usr/lib/mlt-7")
+var f:Repository = initFactory("/usr/lib/mlt-7")
 if f == nil:
     quit("""mlt_factory_init returned "nil"""")
 
 
 # Create the default consumer
-var p:mlt_profile = mlt_profile_init(nil)
-var hello:mlt_consumer = mlt_factory_consumer(p, "sdl2", nil) #mlt_profile_init(""), # "sdl2"
+var p:Profile = newProfile() #mlt_profile_init(nil)
+var hello:Consumer = newFactoryConsumer(p, "sdl2")
 if hello == nil:
     quit("""mlt_factory_consumer returned "nil"""")
 
 # Create via the default producer
-var color:cstring = "color:red".cstring
-var world:mlt_producer = mlt_factory_producer(p, nil, color)
+var world:Producer = newFactoryProducer(p, resource = "color:red")
 
 # Connect the producer to the consumer
 if world == nil:
     quit("""mlt_factory_producer returned "nil"""")
 
-var res = mlt_consumer_connect( hello, mlt_producer_service( world ) )
-echo "mlt_consumer_Connect: " & $res
+connect( hello, getService( world ) )
+
 
 # Start the consumer
-res = mlt_consumer_start( hello )
-echo "mlt_consumer_start:" & $res
-echo "mlt_consumer_is_stopped(hello):" & $mlt_consumer_is_stopped(hello)
+start(hello)
 
-while mlt_consumer_is_stopped(hello) == 0:
+while isStopped(hello):
     sleep(1)
 
 # Close the consumer
-mlt_consumer_close( hello )
+close( hello )
 
 # Close the producer
-mlt_producer_close( world )
+close( world )
 
 
 # Close the factory
-mlt_factory_close( )    
+closeFactory()    

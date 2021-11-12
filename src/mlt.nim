@@ -1,5 +1,5 @@
 import wrapper/mlt
-import lib/version
+import lib/[version, factory, profile, typs, consumer, producer, filter]
 
 export mlt
-export version
+export version, factory, profile, typs, consumer, producer, filter
