@@ -7,3 +7,4 @@ type
   Profile*    = mlt_profile
   Service*    = mlt_service
   Filter*     = mlt_filter
+  Properties* = mlt_properties

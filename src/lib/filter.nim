@@ -7,7 +7,7 @@ proc connect*(self:Filter; producer: Service; index:int = 0) =
   if res > 0:
     quit("""mlt_consumer_connect returned >0""")  
 
-proc getService*(self:Filter):Service =
+converter toService*(self:Filter):Service =
   mlt_filter_service(self) 
 
 proc close*(a:Filter) = 
