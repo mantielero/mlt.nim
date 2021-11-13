@@ -5,9 +5,17 @@ import os
 
 
 
-# Create via the defaugreyscalelt producer
-#var clip = "avformat:/home/jose/Descargas/sygic.mp4".cstring
-#var world:mlt_producer = mlt_factory_producer(p, nil, clip )
+# Create a playlist
+var p:Profile = newProfile() 
+
+var pl = newPlaylist()
+var clip1 = newFactoryProducer(p, resource = "avformat:/home/jose/Descargas/sygic.mp4")
+pl.append(clip1)
+close(clip1)
+var clip2 = newFactoryProducer(p, resource = "color:red")
+pl.append(clip2)
+close(clip2)
+
 
 var f:Repository = initFactory("/usr/lib/mlt-7")
 if f == nil:
@@ -15,7 +23,7 @@ if f == nil:
 
 
 # Create the default consumer
-var p:Profile = newProfile() #mlt_profile_init(nil)
+
 var hello:Consumer = newFactoryConsumer(p, "sdl2")
 if hello == nil:
     quit("""mlt_factory_consumer returned "nil"""")

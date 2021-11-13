@@ -5,7 +5,7 @@ import typs, os
 proc close*(self:Producer) =
   mlt_producer_close(self)
 
-proc getService*(self:Producer):Service =
+converter toService*(self:Producer):Service =
   ## Get the parent service object.
   mlt_producer_service(self)
 
