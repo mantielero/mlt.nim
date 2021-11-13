@@ -71,6 +71,9 @@ proc newFactoryFilter*(profile:Profile; name: string; input:string = "" ):Filter
   mlt_factory_filter(profile, name.cstring, input.cstring) 
 
 
+proc newFactoryTransition*(profile:Profile; name: string; input:string = "" ):Transition =
+  mlt_factory_transition(profile, name.cstring, input.cstring)
+
 proc closeFactory*() =
   ##[
   Close the factory.
@@ -93,7 +96,7 @@ proc mlt_factory_event_object*(): mlt_properties
 
 proc mlt_factory_link*(name: cstring; input: pointer): mlt_link 
 
-proc mlt_factory_transition*(profile: mlt_profile; name: cstring; input: pointer): mlt_transition
+
 
 proc mlt_factory_register_for_clean_up*(`ptr`: pointer;
                                         destructor: mlt_destructor) 

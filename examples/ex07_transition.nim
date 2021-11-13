@@ -23,6 +23,13 @@ close(clip2)
 var plProducer:Producer = pl
 
 
+
+#mlt_transition transition = mlt_factor_transition( "luma", NULL );
+var transLuma = newFactoryTransition(p, "luma")
+mix(pl, 0, 50, transLuma)
+close(transLuma)
+
+
 # Create the default consumer
 
 var sdlOut:Consumer = newFactoryConsumer(p, "sdl2")

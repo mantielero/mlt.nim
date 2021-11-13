@@ -12,10 +12,34 @@ proc append*(self: Playlist; producer: Producer) =
   if res > 0:
     quit("""unable to append producer to the playlist""")
 
+
+proc append*(self: Playlist; producer: Producer; `in`, `out`:Position) =  
+  let res = mlt_playlist_append_io(self, producer, `in`, `out`)
+  if res > 0:
+    quit("""unable to append producer to the playlist""")
+
+
 proc close*(self:Playlist) =
   mlt_playlist_close(self)
 
+converter toProducer*(self:Playlist):Producer =
+  mlt_playlist_producer(self)
 
+
+# Transitions
+
+proc mix*(self:Playlist; clip, length:int; trn: Transition) =
+  let res = mlt_playlist_mix(self, clip.cint, length.cint, trn)
+  if res > 0:
+    quit("""unable to apply transition to playlist""")
+
+#[
+
+proc mlt_playlist_mix_in*(self: mlt_playlist; clip: cint; length: cint): cint
+proc mlt_playlist_mix_out*(self: mlt_playlist; clip: cint; length: cint): cint
+proc mlt_playlist_mix_add*(self: mlt_playlist; clip: cint;
+                           transition: mlt_transition): cint
+]#
 
 
 #[
@@ -27,8 +51,7 @@ proc mlt_playlist_properties*(self: mlt_playlist): mlt_properties
 proc mlt_playlist_count*(self: mlt_playlist): cint
 proc mlt_playlist_clear*(self: mlt_playlist): cint
 
-proc mlt_playlist_append_io*(self: mlt_playlist; producer: mlt_producer;
-                             `in`: mlt_position; `out`: mlt_position): cint
+
 proc mlt_playlist_blank*(self: mlt_playlist; `out`: mlt_position): cint
 proc mlt_playlist_blank_time*(self: mlt_playlist; length: cstring): cint
 proc mlt_playlist_clip*(self: mlt_playlist; whence: mlt_whence; index: cint): mlt_position
@@ -48,12 +71,9 @@ proc mlt_playlist_split*(self: mlt_playlist; clip: cint; position: mlt_position)
 proc mlt_playlist_split_at*(self: mlt_playlist; position: mlt_position;
                             left: cint): cint
 proc mlt_playlist_join*(self: mlt_playlist; clip: cint; count: cint; merge: cint): cint
-proc mlt_playlist_mix*(self: mlt_playlist; clip: cint; length: cint;
-                       transition: mlt_transition): cint
-proc mlt_playlist_mix_in*(self: mlt_playlist; clip: cint; length: cint): cint
-proc mlt_playlist_mix_out*(self: mlt_playlist; clip: cint; length: cint): cint
-proc mlt_playlist_mix_add*(self: mlt_playlist; clip: cint;
-                           transition: mlt_transition): cint
+
+
+
 proc mlt_playlist_get_clip*(self: mlt_playlist; clip: cint): mlt_producer
 proc mlt_playlist_get_clip_at*(self: mlt_playlist; position: mlt_position): mlt_producer
 proc mlt_playlist_get_clip_index_at*(self: mlt_playlist; position: mlt_position): cint

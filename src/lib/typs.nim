@@ -9,3 +9,5 @@ type
   Filter*     = mlt_filter
   Properties* = mlt_properties
   Playlist*   = mlt_playlist
+  Position*   = mlt_position
+  Transition* = mlt_transition
