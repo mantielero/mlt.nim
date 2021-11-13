@@ -11,3 +11,6 @@ type
   Playlist*   = mlt_playlist
   Position*   = mlt_position
   Transition* = mlt_transition
+  Tractor*    = mlt_tractor
+  Field*      = mlt_field
+  Multitrack* = mlt_multitrack

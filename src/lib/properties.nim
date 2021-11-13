@@ -3,7 +3,7 @@ import typs, os, std/strformat
 
 
 
-
+# setters
 proc set*(self:Properties; name:string; value:float) =
   let res = mlt_properties_set_double(self, name.cstring, value.cdouble)
   if res > 0:
@@ -14,7 +14,29 @@ proc set*(self:Properties; name, value:string) =
   if res > 0:
     quit("""unable to set property "{name}" """)
 
-proc `[]=`*[T:float|string](self:Properties; name:string; value:T) =
+#[ proc set*(self:Properties; name, value:string) =
+  let res = mlt_properties_set_string(self, name.cstring, value.cstring)
+  if res > 0:
+    quit("""unable to set property "{name}" """) ]#
+
+
+proc set*(self:Properties; name:string; value:int) =
+  let res = mlt_properties_set_int(self, name.cstring, value.cint)
+  if res > 0:
+    quit("""unable to set property "{name}" """)
+
+proc set*(self:Properties; name:string; value:int64) =
+  let res = mlt_properties_set_int64(self, name.cstring, value)
+  if res > 0:
+    quit("""unable to set property "{name}" """)
+
+# set_position
+proc setPosition*(self:Properties; name:string; value:Position) =
+  let res = mlt_properties_set_position(self, name.cstring, value)
+  if res > 0:
+    quit("""unable to set position "{name}" """)  
+
+proc `[]=`*[T:float|string|int|int64](self:Properties; name:string; value:T) =
   set(self, name, value)
 
 #[
@@ -48,14 +70,13 @@ proc mlt_properties_get_value*(self: mlt_properties; index: cint): cstring
 proc mlt_properties_get_data_at*(self: mlt_properties; index: cint;
                                  size: ptr cint): pointer
 proc mlt_properties_get_int*(self: mlt_properties; name: cstring): cint
-proc mlt_properties_set_int*(self: mlt_properties; name: cstring; value: cint): cint
+
 proc mlt_properties_get_int64*(self: mlt_properties; name: cstring): int64
-proc mlt_properties_set_int64*(self: mlt_properties; name: cstring; value: int64): cint
+
 proc mlt_properties_get_double*(self: mlt_properties; name: cstring): cdouble
 
 proc mlt_properties_get_position*(self: mlt_properties; name: cstring): mlt_position
-proc mlt_properties_set_position*(self: mlt_properties; name: cstring;
-                                  value: mlt_position): cint
+
 proc mlt_properties_set_data*(self: mlt_properties; name: cstring;
                               value: pointer; length: cint; a5: mlt_destructor;
                               a6: mlt_serialiser): cint

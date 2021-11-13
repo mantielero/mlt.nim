@@ -10,6 +10,9 @@ converter toService*(self:Producer):Service =
   mlt_producer_service(self)
 
 
+proc getPlaytime*(self:Producer):Position =
+  mlt_producer_get_playtime(self)
+
 #[
 proc mlt_producer_init*(self: mlt_producer; child: pointer): cint
 
@@ -43,7 +46,7 @@ proc mlt_producer_get_in*(self: mlt_producer): mlt_position
 
 proc mlt_producer_get_out*(self: mlt_producer): mlt_position
 
-proc mlt_producer_get_playtime*(self: mlt_producer): mlt_position
+
 
 proc mlt_producer_get_length*(self: mlt_producer): mlt_position
 

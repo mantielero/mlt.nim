@@ -2,7 +2,6 @@ import ../wrapper/mlt
 import typs, os
 
 
-
 proc connect*(self:Consumer, producer:Service) =
   let res = mlt_consumer_connect(self, producer).int
   if res > 0:
@@ -18,7 +17,8 @@ proc start*(self:Consumer) =
 
 
 proc isStopped*(self:Consumer):bool =
-  let res = mlt_consumer_is_stopped (self)
+  let res = mlt_consumer_is_stopped(self)
+  #echo res
   if res == 0:
     return true
   return false

@@ -5,14 +5,17 @@ import typs, os, std/strformat
 proc close*(self:Transition) =
   mlt_transition_close(self)
 
+
+converter toProperties*(self:Transition):Properties =
+  mlt_transition_properties(self)
+
 #[
 proc mlt_transition_init*(self: mlt_transition; child: pointer): cint {.importc,
     cdecl, impmltDyn.}
 proc mlt_transition_new*(): mlt_transition {.importc, cdecl, impmltDyn.}
 proc mlt_transition_service*(self: mlt_transition): mlt_service {.importc,
     cdecl, impmltDyn.}
-proc mlt_transition_properties*(self: mlt_transition): mlt_properties {.importc,
-    cdecl, impmltDyn.}
+
 proc mlt_transition_connect*(self: mlt_transition; producer: mlt_service;
                              a_track: cint; b_track: cint): cint {.importc,
     cdecl, impmltDyn.}
