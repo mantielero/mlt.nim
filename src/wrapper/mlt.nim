@@ -1,6 +1,6 @@
-# Generated @ 2021-11-08T20:25:01+01:00
+# Generated @ 2021-11-13T17:37:31+01:00
 # Command line:
-#   /home/jose/.nimble/pkgs/nimterop-0.6.13/nimterop/toast --preprocess -m:c --recurse --passL=-lX11 --includeDirs+=/usr/include/mlt-7/framework --pnim --dynlib=libmlt-7.so --symOverride=mlt_property_s,mlt_event_struct,mlt_field_s,mlt_deque_s,mlt_geometry_s,mlt_geometry_item_s,mlt_repository_s,mlt_cache_s,mlt_cache_item_s,mlt_animation_s,playlist_entry_s,locale_t,mlt_tokeniser,pthread_mutex_t --nim:/home/jose/.choosenim/toolchains/nim-1.6.0/bin/nim --pluginSourcePath=/home/jose/.cache/nim/nimterop/cPlugins/nimterop_279031550.nim /usr/include/mlt-7/framework/mlt.h -o /home/jose/src/mlt.nim/src/wrapper/mlt.nim
+#   /home/jose/.nimble/pkgs/nimterop-0.6.13/nimterop/toast --preprocess -m:c --recurse --passL=-lX11 --includeDirs+=/usr/include/mlt-7/framework --pnim --dynlib=libmlt-7.so --symOverride=mlt_property_s,mlt_event_struct,mlt_field_s,mlt_deque_s,mlt_geometry_s,mlt_geometry_item_s,mlt_repository_s,mlt_cache_s,mlt_cache_item_s,mlt_animation_s,locale_t,mlt_tokeniser,pthread_mutex_t --nim:/home/jose/.choosenim/toolchains/nim-1.6.0/bin/nim --pluginSourcePath=/home/jose/.cache/nim/nimterop/cPlugins/nimterop_3487354344.nim /usr/include/mlt-7/framework/mlt.h -o /home/jose/src/mlt.nim/src/wrapper/mlt.nim
 
 # const 'GCC_VERSION' has unsupported value '(__GNUC__ * 10000 + __GNUC_MINOR__ * 100 + __GNUC_PATCHLEVEL__)'
 # const 'mlt_fopen' has unsupported value 'fopen'
@@ -261,7 +261,7 @@ const
   MLT_LOG_TIMINGS* = 44
   MLT_LOG_DEBUG* = 48
   LIBMLT_VERSION_MAJOR* = 7
-  LIBMLT_VERSION_MINOR* = 2
+  LIBMLT_VERSION_MINOR* = 3
   LIBMLT_VERSION_REVISION* = 0
   LIBMLT_VERSION_INT* = ((LIBMLT_VERSION_MAJOR shl
       typeof(LIBMLT_VERSION_MAJOR)(16)) +
@@ -270,7 +270,6 @@ const
       typeof(LIBMLT_VERSION_MAJOR)(LIBMLT_VERSION_REVISION))
 type
   mlt_repository_s = object
-  playlist_entry_s = object
   mlt_animation_s = object
   mlt_tokeniser = object
   mlt_cache_item_s = object
@@ -812,8 +811,9 @@ type
     repeat*: cint            ## ```
                              ##   < the number of times the clip is repeated
                              ## ```
-  
-  playlist_entry* {.importc, impmltHdr.} = playlist_entry_s
+  # mlt_playlist.h:typedef struct playlist_entry_s playlist_entry;
+
+  playlist_entry* {.importc, impmltHdr.} = object #playlist_entry_s
   mlt_playlist_s* {.bycopy, impmltHdr, importc: "struct mlt_playlist_s".} = object
     parent*: mlt_producer_s
     blank*: mlt_producer_s

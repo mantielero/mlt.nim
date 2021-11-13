@@ -5,21 +5,26 @@ import os
 
 
 
+var f:Repository = initFactory("/usr/lib/mlt-7")
+if f == nil:
+    quit("""mlt_factory_init returned "nil"""")
+
 # Create a playlist
 var p:Profile = newProfile() 
 
 var pl = newPlaylist()
+
 var clip1 = newFactoryProducer(p, resource = "avformat:/home/jose/Descargas/sygic.mp4")
 pl.append(clip1)
 close(clip1)
+
 var clip2 = newFactoryProducer(p, resource = "color:red")
 pl.append(clip2)
 close(clip2)
 
+close(pl)
 
-var f:Repository = initFactory("/usr/lib/mlt-7")
-if f == nil:
-    quit("""mlt_factory_init returned "nil"""")
+
 
 
 # Create the default consumer
