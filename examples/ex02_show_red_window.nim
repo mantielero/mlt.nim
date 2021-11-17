@@ -25,7 +25,7 @@ var world:Producer = newFactoryProducer(p, resource = "color:red")
 if world == nil:
     quit("""mlt_factory_producer returned "nil"""")
 
-connect( hello, getService( world ) )
+connect( hello, toService( world ) )
 
 
 # Start the consumer

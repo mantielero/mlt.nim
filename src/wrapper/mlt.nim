@@ -1,6 +1,6 @@
-# Generated @ 2021-11-13T17:37:31+01:00
+# Generated @ 2021-11-15T17:56:24+01:00
 # Command line:
-#   /home/jose/.nimble/pkgs/nimterop-0.6.13/nimterop/toast --preprocess -m:c --recurse --passL=-lX11 --includeDirs+=/usr/include/mlt-7/framework --pnim --dynlib=libmlt-7.so --symOverride=mlt_property_s,mlt_event_struct,mlt_field_s,mlt_deque_s,mlt_geometry_s,mlt_geometry_item_s,mlt_repository_s,mlt_cache_s,mlt_cache_item_s,mlt_animation_s,locale_t,mlt_tokeniser,pthread_mutex_t --nim:/home/jose/.choosenim/toolchains/nim-1.6.0/bin/nim --pluginSourcePath=/home/jose/.cache/nim/nimterop/cPlugins/nimterop_3487354344.nim /usr/include/mlt-7/framework/mlt.h -o /home/jose/src/mlt.nim/src/wrapper/mlt.nim
+#   /home/jose/.nimble/pkgs/nimterop-0.6.13/nimterop/toast --preprocess -m:c --recurse --passL=-lX11 --includeDirs+=/usr/include/mlt-7/framework --pnim --dynlib=libmlt-7.so --symOverride=mlt_property_s,mlt_event_struct,mlt_field_s,mlt_deque_s,mlt_geometry_s,mlt_geometry_item_s,mlt_repository_s,mlt_cache_s,mlt_cache_item_s,mlt_animation_s,playlist_entry_s,locale_t,mlt_tokeniser,pthread_mutex_t,mlt_consumer_s,mlt_producer_s --nim:/home/jose/.choosenim/toolchains/nim-1.6.0/bin/nim --pluginSourcePath=/home/jose/.cache/nim/nimterop/cPlugins/nimterop_3902347026.nim /usr/include/mlt-7/framework/mlt.h -o /home/jose/src/mlt.nim/src/wrapper/mlt.nim
 
 # const 'GCC_VERSION' has unsupported value '(__GNUC__ * 10000 + __GNUC_MINOR__ * 100 + __GNUC_PATCHLEVEL__)'
 # const 'mlt_fopen' has unsupported value 'fopen'
@@ -270,6 +270,7 @@ const
       typeof(LIBMLT_VERSION_MAJOR)(LIBMLT_VERSION_REVISION))
 type
   mlt_repository_s = object
+  playlist_entry_s = object
   mlt_animation_s = object
   mlt_tokeniser = object
   mlt_cache_item_s = object
@@ -660,48 +661,7 @@ type
                              ##   Protected
                              ## ```
   
-  mlt_producer_s* {.bycopy, impmltHdr, importc: "struct mlt_producer_s".} = object
-    parent*: mlt_service_s   ## ```
-                             ##   A producer is a service.
-                             ## ```
-    get_frame*: proc (a1: mlt_producer; a2: mlt_frame_ptr; a3: cint): cint {.
-        cdecl.} ## ```
-                ##   Get a frame of data (virtual function).
-                ##   	
-                ##   	 \param mlt_producer a producer
-                ##   	 \param mlt_frame_ptr a frame pointer by reference
-                ##   	 \param int an index
-                ##   	 \return true if there was an error
-                ## ```
-    seek*: proc (a1: mlt_producer; a2: mlt_position): cint {.cdecl.} ## ```
-                                                                     ##   Seek to a specified position (virtual function).
-                                                                     ##   	
-                                                                     ##   	 \param mlt_producer a producer
-                                                                     ##   	 \param position set the "play head" position of the producer
-                                                                     ##   	 \return false
-                                                                     ## ```
-    set_in_and_out*: proc (a1: mlt_producer; a2: mlt_position; a3: mlt_position): cint {.
-        cdecl.} ## ```
-                ##   Set the in and out points.
-                ##   	
-                ##   	 \param mlt_producer a producer
-                ##   	 \param mlt_position the relative starting time; a negative value is the same as 0
-                ##   	 \param mlt_position the relative ending time; a negative value is the same as length - 1
-                ##   	 \return false
-                ## ```
-    close*: mlt_destructor   ## ```
-                             ##   the destructor virtual function
-                             ## ```
-    close_object*: pointer ## ```
-                           ##   < the object supplied to the close virtual function
-                           ## ```
-    local*: pointer          ## ```
-                             ##   < \private instance object
-                             ## ```
-    child*: pointer          ## ```
-                             ##   < \private the object of a subclass
-                             ## ```
-  
+  mlt_producer_s = object
   mlt_track_s* {.bycopy, impmltHdr, importc: "struct mlt_track_s".} = object
     producer*: mlt_producer
     event*: mlt_event
@@ -738,45 +698,7 @@ type
     held*: cint
     mutex*: pthread_mutex_t
 
-  mlt_consumer_s* {.bycopy, impmltHdr, importc: "struct mlt_consumer_s".} = object
-    parent*: mlt_service_s   ## ```
-                             ##   A consumer is a service.
-                             ## ```
-    start*: proc (a1: mlt_consumer): cint {.cdecl.} ## ```
-                                                    ##   Start the consumer to pull frames (virtual function).
-                                                    ##   	
-                                                    ##   	 \param mlt_consumer a consumer
-                                                    ##   	 \return true if there was an error
-                                                    ## ```
-    stop*: proc (a1: mlt_consumer): cint {.cdecl.} ## ```
-                                                   ##   Stop the consumer (virtual function).
-                                                   ##   	
-                                                   ##   	 \param mlt_consumer a consumer
-                                                   ##   	 \return true if there was an error
-                                                   ## ```
-    is_stopped*: proc (a1: mlt_consumer): cint {.cdecl.} ## ```
-                                                         ##   Get whether the consumer is running or stopped (virtual function).
-                                                         ##   	
-                                                         ##   	 \param mlt_consumer a consumer
-                                                         ##   	 \return true if the consumer is stopped
-                                                         ## ```
-    purge*: proc (a1: mlt_consumer) {.cdecl.} ## ```
-                                              ##   Purge the consumer of buffered data (virtual function).
-                                              ##   	
-                                              ##   	 \param mlt_consumer a consumer
-                                              ## ```
-    close*: proc (a1: mlt_consumer) {.cdecl.} ## ```
-                                              ##   The destructor virtual function
-                                              ##   	
-                                              ##   	 \param mlt_consumer a consumer
-                                              ## ```
-    local*: pointer          ## ```
-                             ##   < \private instance object
-                             ## ```
-    child*: pointer          ## ```
-                             ##   < \private the object of a subclass
-                             ## ```
-  
+  mlt_consumer_s = object
   mlt_playlist_clip_info* {.bycopy, importc, impmltHdr.} = object
     clip*: cint              ## ```
                              ##   < the index of the clip within the playlist
@@ -811,9 +733,8 @@ type
     repeat*: cint            ## ```
                              ##   < the number of times the clip is repeated
                              ## ```
-  # mlt_playlist.h:typedef struct playlist_entry_s playlist_entry;
-
-  playlist_entry* {.importc, impmltHdr.} = object #playlist_entry_s
+  
+  playlist_entry* {.importc, impmltHdr.} = playlist_entry_s
   mlt_playlist_s* {.bycopy, impmltHdr, importc: "struct mlt_playlist_s".} = object
     parent*: mlt_producer_s
     blank*: mlt_producer_s

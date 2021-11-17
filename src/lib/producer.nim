@@ -13,6 +13,11 @@ converter toService*(self:Producer):Service =
 proc getPlaytime*(self:Producer):Position =
   mlt_producer_get_playtime(self)
 
+
+
+#proc `=destroy`[T:Producer](x: var T) =
+#  x.close()
+
 #[
 proc mlt_producer_init*(self: mlt_producer; child: pointer): cint
 

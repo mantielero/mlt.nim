@@ -45,8 +45,9 @@ proc newFactoryProducer*(profile: Profile; service: string = "loader";
   - resource:	an optional argument to the producer constructor, typically a string
   
   ]##
-  mlt_factory_producer(profile, service.cstring, resource.cstring)
-
+  result = mlt_factory_producer(profile, service.cstring, resource.cstring)
+  if result == nil:
+    quit("mlt_factory_producer returned \"nil\"")
 
 
 proc newFactoryConsumer*(profile: Profile; service: string = "sdl2";
@@ -62,9 +63,12 @@ proc newFactoryConsumer*(profile: Profile; service: string = "sdl2";
   - a new consumer
   ]##
   if input == "":
-    mlt_factory_consumer(profile, service.cstring, nil)
+    result = mlt_factory_consumer(profile, service.cstring, nil)
   else:  
-    mlt_factory_consumer(profile, service.cstring, input.cstring)
+    result = mlt_factory_consumer(profile, service.cstring, input.cstring)
+  echo repr result
+  if result == nil:
+    quit("mlt_factory_consumer returned \"nil\"")
 
 proc newFactoryFilter*(profile:Profile; name: string; input:string = "" ):Filter =
   ## Fetch a filter from the repository.
@@ -84,9 +88,17 @@ proc closeFactory*() =
 
 #mlt_factory_init*(directory: cstring): mlt_repository
 
+# Not used
+proc getDirectory*():string =
+  $mlt_factory_directory()
+
+
+proc getRepository*():Repository = 
+  mlt_factory_repository()
+
+
+
 #[
-proc mlt_factory_repository*(): mlt_repository 
-proc mlt_factory_directory*(): cstring 
 proc mlt_environment*(name: cstring): cstring 
 proc mlt_environment_set*(name: cstring; value: cstring): cint 
 
@@ -101,3 +113,20 @@ proc mlt_factory_link*(name: cstring; input: pointer): mlt_link
 proc mlt_factory_register_for_clean_up*(`ptr`: pointer;
                                         destructor: mlt_destructor) 
 ]#
+
+
+# More sugar
+
+template nle*(directory:string; body:untyped):untyped = 
+  var repo:Repository
+  if directory == "":
+    repo = initFactory()
+  else:
+    repo = initFactory(directory)
+
+  if repo == nil:
+      quit("mlt_factory_init returned \"nil\"")
+  
+  body
+
+  closeFactory()

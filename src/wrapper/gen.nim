@@ -35,10 +35,13 @@ cOverride:
     mlt_cache_s = object    
     mlt_cache_item_s = object       
     mlt_animation_s = object     
-    #playlist_entry_s = object        
+    playlist_entry_s = object        
     locale_t = cstring  
     mlt_tokeniser = object
     pthread_mutex_t = object
+
+    mlt_consumer_s = object   # parent, start, stop, is_stopped, purge, close, local, child 
+    mlt_producer_s = object
 #    property = object
 #    position = object
 
