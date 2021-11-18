@@ -3,7 +3,7 @@ import typs, os, strutils
 
 
 proc connect*(self:Consumer, producer:Service) =
-  let res = mlt_consumer_connect(self, producer).int
+  let res = mlt_consumer_connect(self.data, producer).int
   if res > 0:
     quit("""mlt_consumer_connect returned >0""")
 
@@ -13,20 +13,20 @@ proc `>`*(produ:Service, consu:Consumer ) =
   connect(consu, produ)
 
 proc start*(self:Consumer) =
-  let res = mlt_consumer_start(self).int
+  let res = mlt_consumer_start(self.data).int
   if res > 0:
     quit("""failed to start the consumer""")
 
 
 proc stopped*(self:Consumer):bool =
-  let res = mlt_consumer_is_stopped(self).int
+  let res = mlt_consumer_is_stopped(self.data).int
   if res > 0:
     return true
   return false
 
 
 proc close*(self:Consumer) =
-  mlt_consumer_close(self)
+  mlt_consumer_close(self.data)
 
 
 #proc `=destroy`[T:Consumer](x: var T) =
@@ -52,23 +52,23 @@ proc mlt_consumer_position*(a1: mlt_consumer): mlt_position
 
 
 proc newConsumer*():Consumer =
-  mlt_factory_consumer(nil, nil, nil)
+  result.data = mlt_factory_consumer(nil, nil, nil)
 
 
 proc newConsumer*(prof:Profile):Consumer =
-  mlt_factory_consumer(prof, nil, nil)
+  result.data = mlt_factory_consumer(prof, nil, nil)
 
 
 proc newConsumer*(prof:Profile; id:string = "";arg:string = ""):Consumer =
   if id == "" and arg != "":
-    result = mlt_factory_consumer( prof, nil, arg.cstring )
+    result.data = mlt_factory_consumer( prof, nil, arg.cstring )
   
   else:
     let tmp = id.split(':', 1)
     if len(tmp) == 1:
-      result = mlt_factory_consumer( prof, tmp[0].cstring, nil )
+      result.data = mlt_factory_consumer( prof, tmp[0].cstring, nil )
     else:
-      result = mlt_factory_consumer( prof, tmp[0].cstring, tmp[1].cstring )
+      result.data = mlt_factory_consumer( prof, tmp[0].cstring, tmp[1].cstring )
 
 
 

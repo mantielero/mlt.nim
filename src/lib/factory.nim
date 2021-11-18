@@ -66,11 +66,11 @@ proc newFactoryConsumer*(profile: Profile; service: string = "sdl2";
   - a new consumer
   ]##
   if input == "":
-    result = mlt_factory_consumer(profile, service.cstring, nil)
+    result.data = mlt_factory_consumer(profile, service.cstring, nil)
   else:  
-    result = mlt_factory_consumer(profile, service.cstring, input.cstring)
-  echo repr result
-  if result == nil:
+    result.data = mlt_factory_consumer(profile, service.cstring, input.cstring)
+  echo repr result.data
+  if result.data == nil:
     quit("mlt_factory_consumer returned \"nil\"")
 
 proc newFactoryFilter*(profile:Profile; name: string; input:string = "" ):Filter =

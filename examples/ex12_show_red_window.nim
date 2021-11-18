@@ -23,12 +23,12 @@ nle "/usr/lib/mlt-7":
     echo n
     n += 1
     if n == 3000:
-      discard mlt_consumer_stop(c) 
+      discard mlt_consumer_stop(c.data) 
   #sleep(1000)
   #sleep(1000)
   echo "EL consumidor ha terminado"
   # Close the consumer
-  c.close
+  #c.close
 
   # Close the producer
   #p.close
