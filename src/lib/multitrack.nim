@@ -3,7 +3,7 @@ import typs, os, std/strformat
 
 
 proc connect*(self: Multitrack; producer: Producer; track: int) =
-  let res = mlt_multitrack_connect(self, producer, track.cint)
+  let res = mlt_multitrack_connect(self, producer.data, track.cint)
   if res > 0:
     quit("""unable to connect multitrack and producer """)  
 

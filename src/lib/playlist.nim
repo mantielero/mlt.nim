@@ -8,13 +8,13 @@ proc newPlaylist*():Playlist =
   mlt_playlist_init()
 
 proc append*(self: Playlist; producer: Producer) =
-  let res = mlt_playlist_append( self,  producer )
+  let res = mlt_playlist_append( self,  producer.data )
   if res > 0:
     quit("""unable to append producer to the playlist""")
 
 
 proc append*(self: Playlist; producer: Producer; `in`, `out`:Position) =  
-  let res = mlt_playlist_append_io(self, producer, `in`, `out`)
+  let res = mlt_playlist_append_io(self, producer.data, `in`, `out`)
   if res > 0:
     quit("""unable to append producer to the playlist""")
 
@@ -23,7 +23,9 @@ proc close*(self:Playlist) =
   mlt_playlist_close(self)
 
 converter toProducer*(self:Playlist):Producer =
-  mlt_playlist_producer(self)
+  #result:Producer
+  result.data = mlt_playlist_producer(self)
+  #return tmp
 
 
 # Transitions

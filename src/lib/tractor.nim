@@ -6,7 +6,9 @@ proc newTractor*():Tractor =
   mlt_tractor_new()
 
 converter toProducer*(self:Tractor):Producer = 
-  mlt_tractor_producer(self)
+  #var tmp:Producer
+  result.data = mlt_tractor_producer(self)
+  #return tmp
 
 converter toService*(self:Tractor):Service =
   mlt_tractor_service(self)

@@ -3,15 +3,15 @@ import typs, os
 
 
 proc close*(self:Producer) =
-  mlt_producer_close(self)
+  mlt_producer_close(self.data)
 
 converter toService*(self:Producer):Service =
   ## Get the parent service object.
-  mlt_producer_service(self)
+  mlt_producer_service(self.data)
 
 
 proc getPlaytime*(self:Producer):Position =
-  mlt_producer_get_playtime(self)
+  mlt_producer_get_playtime(self.data)
 
 
 

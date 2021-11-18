@@ -20,6 +20,7 @@ These values are initialised from the environment variables of the same name.
 
 As shown above, a producer can be created using the ‘default normalising’ producer, and they can also be requested by name. Filters and transitions are always requested by name - there is no concept of a ‘default’ for these.
 ]##
+#{.passL:"-pthread".}
 import ../wrapper/mlt
 import typs
 
@@ -45,10 +46,12 @@ proc newFactoryProducer*(profile: Profile; service: string = "loader";
   - resource:	an optional argument to the producer constructor, typically a string
   
   ]##
-  result = mlt_factory_producer(profile, service.cstring, resource.cstring)
-  if result == nil:
+  #var tmp:Producer
+  result.data = mlt_factory_producer(profile, service.cstring, resource.cstring)
+  if result.data == nil:
     quit("mlt_factory_producer returned \"nil\"")
 
+  #return tmp
 
 proc newFactoryConsumer*(profile: Profile; service: string = "sdl2";
                            input: string = ""): Consumer =
