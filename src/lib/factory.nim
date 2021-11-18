@@ -27,10 +27,10 @@ import typs
 
 
 proc initFactory*():Repository = 
-  mlt_factory_init(nil)
+  result.data = mlt_factory_init(nil)
 
 proc initFactory*(directory:string):Repository = 
-  mlt_factory_init(directory.cstring)
+  result.data = mlt_factory_init(directory.cstring)
 
 
 proc newFactoryProducer*(profile: Profile; service: string = "loader";
@@ -97,7 +97,7 @@ proc getDirectory*():string =
 
 
 proc getRepository*():Repository = 
-  mlt_factory_repository()
+  result.data = mlt_factory_repository()
 
 
 
@@ -127,9 +127,9 @@ template nle*(directory:string; body:untyped):untyped =
   else:
     repo = initFactory(directory)
 
-  if repo == nil:
+  if repo.data == nil:
       quit("mlt_factory_init returned \"nil\"")
   
   body
 
-  closeFactory()
+  #closeFactory()

@@ -2,7 +2,7 @@ import ../wrapper/mlt
 
 type
   Consumer*   = mlt_consumer 
-  Repository* = mlt_repository 
+  #Repository* = mlt_repository 
   Profile*    = mlt_profile
   Service*    = mlt_service
   Filter*     = mlt_filter
@@ -18,10 +18,24 @@ type
   Producer* = object
     data*: mlt_producer   # where: mlt_producer* {.importc, impmltHdr.} = ptr mlt_producer_s
 
+  Repository* = object
+    data*: mlt_repository
+
 proc `=destroy`*(p: var Producer) =
   if not p.data.isNil:
     echo "destroying producer"
     p.data.mlt_producer_close
+    
+    #p.data.close = nil
+    #c_producer_close(p.self)
+  else:
+    echo "=destroy nil"
+
+proc `=destroy`*(p: var Repository) =
+  if not p.data.isNil:
+    echo "destroying Repository"
+    #p.data.mlt_producer_close
+    mlt_factory_close()
     
     #p.data.close = nil
     #c_producer_close(p.self)

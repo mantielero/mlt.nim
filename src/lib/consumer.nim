@@ -18,9 +18,9 @@ proc start*(self:Consumer) =
     quit("""failed to start the consumer""")
 
 
-proc isStopped*(self:Consumer):bool =
-  let res = mlt_consumer_is_stopped(self)
-  if res == 0:
+proc stopped*(self:Consumer):bool =
+  let res = mlt_consumer_is_stopped(self).int
+  if res > 0:
     return true
   return false
 
