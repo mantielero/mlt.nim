@@ -78,3 +78,8 @@ https://github.com/mltframework/melted/blob/65b2f6e65aa49d84541558958d7c6c8ff23a
 
 ## Other
 https://github.com/mltframework/mlt/tree/master/demo
+
+
+# TODO
+- "terminate_on_pause" property on the consumer
+- the filter should be attached to the producer, and the consumer connected to the producer: `mlt_service_attach`

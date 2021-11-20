@@ -8,6 +8,13 @@ converter toProperties*(self:Service):Properties =
 converter toProperties*(self:Filter):Properties =
   self.toService.toProperties
 
+
+
+proc attach*(self:Service; f:Filter) =
+  let res = mlt_service_attach(self.data, f.data).int
+  if res > 0:
+    quit("unable to attach filter to service")
+
 #[
 proc mlt_service_init*(self: mlt_service; child: pointer): cint
 proc mlt_service_lock*(self: mlt_service)
@@ -24,7 +31,7 @@ proc mlt_service_get_frame*(self: mlt_service; frame: mlt_frame_ptr; index: cint
 proc mlt_service_properties*(self: mlt_service): mlt_properties
 proc mlt_service_consumer*(self: mlt_service): mlt_service
 proc mlt_service_producer*(self: mlt_service): mlt_service
-proc mlt_service_attach*(self: mlt_service; filter: mlt_filter): cint
+
 proc mlt_service_detach*(self: mlt_service; filter: mlt_filter): cint
 proc mlt_service_apply_filters*(self: mlt_service; frame: mlt_frame; index: cint)
 proc mlt_service_filter_count*(self: mlt_service): cint
