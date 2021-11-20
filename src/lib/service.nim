@@ -3,7 +3,7 @@ import typs, os, filter
 
 
 converter toProperties*(self:Service):Properties =
-  mlt_service_properties(self)
+  result.data = mlt_service_properties(self.data)
 
 converter toProperties*(self:Filter):Properties =
   self.toService.toProperties

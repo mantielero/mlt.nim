@@ -1,49 +1,27 @@
-# nim c -r ex02
-# https://www.mltframework.org/docs/framework/
-# https://cpp.hotexamples.com/es/examples/-/-/MLT_CONSUMER_PROPERTIES/cpp-mlt_consumer_properties-function-examples.html
-{.passL: "-pthread".}
+# nim c --threads:on -r ex03_show_video.nim
+#{.passL: "-pthread".}
 import mlt
 import os
 
 
+let f = initFactory("/usr/lib/mlt-7")
+
+# Create the consumer
+let p = newProfile("hdv_720_50p")
+var sdl = newFactoryConsumer(p, "sdl2")
 
 # Create via the default producer
-#var clip = "avformat:/home/jose/Descargas/sygic.mp4".cstring
-#var world:mlt_producer = mlt_factory_producer(p, nil, clip )
+var clip1 = newFactoryProducer(p, resource = "avformat:/home/jose/Descargas/sygic.mp4")
 
-var f:Repository = initFactory("/usr/lib/mlt-7")
-if f == nil:
-    quit("""mlt_factory_init returned "nil"""")
+clip1 > sdl # Connect producer to consumer
 
+sdl.start # Start the consumer
 
-# Create the default consumer
-var p:Profile = newProfile() #mlt_profile_init(nil)
-var hello:Consumer = newFactoryConsumer(p, "sdl2")
-if hello == nil:
-    quit("""mlt_factory_consumer returned "nil"""")
-
-# Create via the default producer
-var world:Producer = newFactoryProducer(p, resource = "avformat:/home/jose/Descargas/sygic.mp4")
-
-# Connect the producer to the consumer
-if world == nil:
-    quit("""mlt_factory_producer returned "nil"""")
-
-connect( hello, getService( world ) )
-
-
-# Start the consumer
-start(hello)
-
-while isStopped(hello):
-    sleep(1)
-
-# Close the consumer
-close( hello )
-
-# Close the producer
-close( world )
-
-
-# Close the factory
-closeFactory()    
+# Stop the consumer when finished
+let nFrames =  clip1.length - 1
+while not stopped(sdl):
+  let pos = sdl.position #mlt_consumer_position(hello.data).int
+  #echo world.length     #<----------- NOT WORKING
+  if pos == nFrames:
+    sdl.stop
+  sleep(1)

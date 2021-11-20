@@ -31,6 +31,8 @@ proc initFactory*():Repository =
 
 proc initFactory*(directory:string):Repository = 
   result.data = mlt_factory_init(directory.cstring)
+  if result.data == nil:
+    quit("mlt_factory_init returned \"nil\"")
 
 
 proc newFactoryProducer*(profile: Profile; service: string = "loader";
@@ -47,7 +49,7 @@ proc newFactoryProducer*(profile: Profile; service: string = "loader";
   
   ]##
   #var tmp:Producer
-  result.data = mlt_factory_producer(profile, service.cstring, resource.cstring)
+  result.data = mlt_factory_producer(profile.data, service.cstring, resource.cstring)
   if result.data == nil:
     quit("mlt_factory_producer returned \"nil\"")
 
@@ -66,20 +68,20 @@ proc newFactoryConsumer*(profile: Profile; service: string = "sdl2";
   - a new consumer
   ]##
   if input == "":
-    result.data = mlt_factory_consumer(profile, service.cstring, nil)
+    result.data = mlt_factory_consumer(profile.data, service.cstring, nil)
   else:  
-    result.data = mlt_factory_consumer(profile, service.cstring, input.cstring)
+    result.data = mlt_factory_consumer(profile.data, service.cstring, input.cstring)
   echo repr result.data
   if result.data == nil:
     quit("mlt_factory_consumer returned \"nil\"")
 
 proc newFactoryFilter*(profile:Profile; name: string; input:string = "" ):Filter =
   ## Fetch a filter from the repository.
-  mlt_factory_filter(profile, name.cstring, input.cstring) 
+  result.data = mlt_factory_filter(profile.data, name.cstring, input.cstring) 
 
 
 proc newFactoryTransition*(profile:Profile; name: string; input:string = "" ):Transition =
-  mlt_factory_transition(profile, name.cstring, input.cstring)
+  result.data = mlt_factory_transition(profile.data, name.cstring, input.cstring)
 
 proc closeFactory*() =
   ##[

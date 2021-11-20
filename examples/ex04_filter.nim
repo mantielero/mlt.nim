@@ -1,50 +1,24 @@
-# nim c -r ex02
-# https://www.mltframework.org/docs/framework/
-# https://cpp.hotexamples.com/es/examples/-/-/MLT_CONSUMER_PROPERTIES/cpp-mlt_consumer_properties-function-examples.html
-{.passL: "-pthread".}
-import mlt
-import os
+# nim c -r --threads:on ex04_filter
+import mlt, os
 
-
-
-# Create via the default producer
-#var clip = "avformat:/home/jose/Descargas/sygic.mp4".cstring
-#var world:mlt_producer = mlt_factory_producer(p, nil, clip )
-
-var f:Repository = initFactory("/usr/lib/mlt-7")
-if f == nil:
-    quit("""mlt_factory_init returned "nil"""")
-
+var f = initFactory()
 
 # Create the default consumer
-var p:Profile = newProfile() #mlt_profile_init(nil)
-var hello:Consumer = newFactoryConsumer(p, "sdl2")
-if hello == nil:
-    quit("""mlt_factory_consumer returned "nil"""")
+var p = newProfile("hdv_720_50p") 
+var sdl = newFactoryConsumer(p, "sdl2")
 
 # Create via the default producer
-var world:Producer = newFactoryProducer(p, resource = "avformat:/home/jose/Descargas/sygic.mp4")
+var clip = newFactoryProducer(p, resource = "avformat:/home/jose/Descargas/sygic.mp4")
 
-# Connect the producer to the consumer
-if world == nil:
-    quit("""mlt_factory_producer returned "nil"""")
-
-connect( hello, mlt_producer_service( world ) )
-
+# Create filter
 var filter = newFactoryFilter(p, "greyscale") # invert, tcolor, threshold
 
-connect( hello, getService(filter) )
-connect( filter, getService(world) )
-
+# Connect
+clip > filter
+filter > sdl
 
 # Start the consumer
-start(hello)
+sdl.start
 
-while isStopped(hello):
-    sleep(1)
-
-# Closing everything
-close( hello )
-close( filter )
-close( world )
-closeFactory()    
+while not sdl.stopped:
+  sleep(1)

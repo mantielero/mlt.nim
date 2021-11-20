@@ -1,15 +1,10 @@
-# nim c -r ex05
-{.passL: "-pthread".}
-import mlt
-import os
+# nim c -r --threads:on ex06_playlist
+import mlt, os
 
-var f:Repository = initFactory("/usr/lib/mlt-7")
-if f == nil:
-    quit("""mlt_factory_init returned "nil"""")
+var f = initFactory()
+var p = newProfile() 
 
 # Create a playlist
-var p:Profile = newProfile() 
-
 var pl = newPlaylist()
 
 var clip1 = newFactoryProducer(p, resource = "avformat:/home/jose/Descargas/sygic.mp4")
@@ -20,40 +15,14 @@ var clip2 = newFactoryProducer(p, resource = "color:red")
 pl.append(clip2, 0, 60)
 close(clip2)
 
-var plProducer:Producer = pl
-
-
-# Create the default consumer
-
-var sdlOut:Consumer = newFactoryConsumer(p, "sdl2")
-if sdlOut == nil:
-    quit("""mlt_factory_consumer returned "nil"""")
+# Consumer
+var sdl = newFactoryConsumer(p, "sdl2")
 
 # Connect the producer to the consumer
-#if world == nil:
-#    quit("""mlt_factory_producer returned "nil"""")
-
-#connect( hello, mlt_producer_service( world ) )
-
-#[
-var filter = newFactoryFilter(p, "frei0r.pixeliz0r")
-
-set(filter, "BlockSizeX", 0.1 )
-set(filter, "BlockSizeY", 0.1 )
-filter["BlockSizeY"] = 0.2
-]#
-
-sdlOut > toService(plProducer)  #connect( hello, filter) 
-#connect( filter, world )
-
+pl > sdl
 
 # Start the consumer
-start(sdlOut)
+sdl.start
 
-while isStopped(sdlOut):
+while not sdl.stopped:
   sleep(1)
-
-# Closing everything
-close(pl)
-close( sdlOut )
-closeFactory()    

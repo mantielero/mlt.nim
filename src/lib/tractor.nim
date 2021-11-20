@@ -3,31 +3,31 @@ import typs, os, std/strformat
 
 
 proc newTractor*():Tractor =
-  mlt_tractor_new()
+  result.data = mlt_tractor_new()
 
 converter toProducer*(self:Tractor):Producer = 
   #var tmp:Producer
-  result.data = mlt_tractor_producer(self)
+  result.data = mlt_tractor_producer(self.data)
   #return tmp
 
 converter toService*(self:Tractor):Service =
-  mlt_tractor_service(self)
+  result.data = mlt_tractor_service(self.data)
 
 proc toField*(self:Tractor):Field =
-  mlt_tractor_field(self)
+  result.data = mlt_tractor_field(self.data)
 
 proc toMultitrack*(self:Tractor):Multitrack =
-  mlt_tractor_multitrack(self)
+  result.data = mlt_tractor_multitrack(self.data)
 
 proc toProperties*(self:Tractor):Properties =
-  mlt_tractor_properties(self)
+ result.data =  mlt_tractor_properties(self.data)
 
 proc close*(self:Tractor) =
-  mlt_tractor_close(self)
+  mlt_tractor_close(self.data)
 
 
 proc connect*(self: Tractor; service: Service) = 
-  let res = mlt_tractor_connect(self, service)
+  let res = mlt_tractor_connect(self.data, service.data)
   if res > 0:
     quit("""unable to connect tractor to service""")  
     

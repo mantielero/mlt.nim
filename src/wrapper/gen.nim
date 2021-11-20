@@ -36,6 +36,7 @@ cOverride:
     mlt_cache_item_s = object       
     mlt_animation_s = object     
     playlist_entry_s = object        
+    playlist_entry = object 
     locale_t = cstring  
     mlt_tokeniser = object
     pthread_mutex_t = object

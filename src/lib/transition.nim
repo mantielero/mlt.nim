@@ -3,11 +3,11 @@ import typs, os, std/strformat
 
 
 proc close*(self:Transition) =
-  mlt_transition_close(self)
+  mlt_transition_close(self.data)
 
 
 converter toProperties*(self:Transition):Properties =
-  mlt_transition_properties(self)
+  result.data = mlt_transition_properties(self.data)
 
 #[
 proc mlt_transition_init*(self: mlt_transition; child: pointer): cint {.importc,

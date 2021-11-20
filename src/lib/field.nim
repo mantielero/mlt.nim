@@ -3,7 +3,7 @@ import typs, os, std/strformat
 
 
 proc plantTransition*(self: Field; that: Transition; a_track, b_track: int) =
-  let res = mlt_field_plant_transition(self, that, a_track.cint, b_track.cint)
+  let res = mlt_field_plant_transition(self.data, that.data, a_track.cint, b_track.cint)
   if res > 0:
     quit("""unable to plant transition""")
 

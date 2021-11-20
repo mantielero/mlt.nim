@@ -7,11 +7,17 @@ proc close*(self:Producer) =
 
 converter toService*(self:Producer):Service =
   ## Get the parent service object.
-  mlt_producer_service(self.data)
+  result.data = mlt_producer_service(self.data)
 
 
-proc getPlaytime*(self:Producer):Position =
+proc getPlaytime*(self:Producer):int =
   mlt_producer_get_playtime(self.data)
+
+
+
+converter toProperties*(self:Producer):Properties =
+  ## Get the parent service object.
+  result.data = mlt_producer_properties(self.data)
 
 
 
@@ -25,7 +31,7 @@ proc mlt_producer_new*(a1: mlt_profile): mlt_producer
 
 
 
-proc mlt_producer_properties*(self: mlt_producer): mlt_properties
+
 
 proc mlt_producer_seek*(self: mlt_producer; position: mlt_position): cint
 

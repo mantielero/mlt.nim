@@ -1,6 +1,6 @@
-# Generated @ 2021-11-15T17:56:24+01:00
+# Generated @ 2021-11-20T17:01:47+01:00
 # Command line:
-#   /home/jose/.nimble/pkgs/nimterop-0.6.13/nimterop/toast --preprocess -m:c --recurse --passL=-lX11 --includeDirs+=/usr/include/mlt-7/framework --pnim --dynlib=libmlt-7.so --symOverride=mlt_property_s,mlt_event_struct,mlt_field_s,mlt_deque_s,mlt_geometry_s,mlt_geometry_item_s,mlt_repository_s,mlt_cache_s,mlt_cache_item_s,mlt_animation_s,playlist_entry_s,locale_t,mlt_tokeniser,pthread_mutex_t,mlt_consumer_s,mlt_producer_s --nim:/home/jose/.choosenim/toolchains/nim-1.6.0/bin/nim --pluginSourcePath=/home/jose/.cache/nim/nimterop/cPlugins/nimterop_3902347026.nim /usr/include/mlt-7/framework/mlt.h -o /home/jose/src/mlt.nim/src/wrapper/mlt.nim
+#   /home/jose/.nimble/pkgs/nimterop-0.6.13/nimterop/toast --preprocess -m:c --recurse --passL=-lX11 --includeDirs+=/usr/include/mlt-7/framework --pnim --dynlib=libmlt-7.so --symOverride=mlt_property_s,mlt_event_struct,mlt_field_s,mlt_deque_s,mlt_geometry_s,mlt_geometry_item_s,mlt_repository_s,mlt_cache_s,mlt_cache_item_s,mlt_animation_s,playlist_entry_s,playlist_entry,locale_t,mlt_tokeniser,pthread_mutex_t,mlt_consumer_s,mlt_producer_s --nim:/home/jose/.choosenim/toolchains/nim-1.6.0/bin/nim --pluginSourcePath=/home/jose/.cache/nim/nimterop/cPlugins/nimterop_3946969669.nim /usr/include/mlt-7/framework/mlt.h -o /home/jose/src/mlt.nim/src/wrapper/mlt.nim
 
 # const 'GCC_VERSION' has unsupported value '(__GNUC__ * 10000 + __GNUC_MINOR__ * 100 + __GNUC_PATCHLEVEL__)'
 # const 'mlt_fopen' has unsupported value 'fopen'
@@ -734,7 +734,7 @@ type
                              ##   < the number of times the clip is repeated
                              ## ```
   
-  playlist_entry* {.importc, impmltHdr.} = playlist_entry_s
+  playlist_entry = object
   mlt_playlist_s* {.bycopy, impmltHdr, importc: "struct mlt_playlist_s".} = object
     parent*: mlt_producer_s
     blank*: mlt_producer_s

@@ -1,37 +1,43 @@
 #[
 to organise producers in playlists.    
 ]#
-import ../wrapper/mlt
+import ../wrapper/mlt, producer, consumer
 import typs, os, std/strformat
 
 proc newPlaylist*():Playlist = 
-  mlt_playlist_init()
+  result.data = mlt_playlist_init()
 
 proc append*(self: Playlist; producer: Producer) =
-  let res = mlt_playlist_append( self,  producer.data )
+  let res = mlt_playlist_append( self.data,  producer.data )
   if res > 0:
     quit("""unable to append producer to the playlist""")
 
 
-proc append*(self: Playlist; producer: Producer; `in`, `out`:Position) =  
-  let res = mlt_playlist_append_io(self, producer.data, `in`, `out`)
+proc append*(self: Playlist; producer: Producer; `in`, `out`:int) =  
+  let res = mlt_playlist_append_io(self.data, producer.data, `in`.cint, `out`.cint)
   if res > 0:
     quit("""unable to append producer to the playlist""")
 
 
 proc close*(self:Playlist) =
-  mlt_playlist_close(self)
+  mlt_playlist_close(self.data)
 
 converter toProducer*(self:Playlist):Producer =
   #result:Producer
-  result.data = mlt_playlist_producer(self)
+  result.data = mlt_playlist_producer(self.data)
   #return tmp
+
+proc connect*(self:Consumer; pl:Playlist) =
+  connect(self, pl.toProducer.toService)
+
+proc `>`*(pl:Playlist; c:Consumer) =
+  connect(c,pl)
 
 
 # Transitions
 
 proc mix*(self:Playlist; clip, length:int; trn: Transition) =
-  let res = mlt_playlist_mix(self, clip.cint, length.cint, trn)
+  let res = mlt_playlist_mix(self.data, clip.cint, length.cint, trn.data)
   if res > 0:
     quit("""unable to apply transition to playlist""")
 

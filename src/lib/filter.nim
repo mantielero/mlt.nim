@@ -3,21 +3,28 @@ import typs, os
 
 
 proc connect*(self:Filter; producer: Service; index:int = 0) =
-  let res = mlt_filter_connect(self, producer, index.cint)
+  let res = mlt_filter_connect(self.data, producer.data, index.cint)
   if res > 0:
     quit("""mlt_consumer_connect returned >0""")  
 
 converter toService*(self:Filter):Service =
-  mlt_filter_service(self) 
+  result.data = mlt_filter_service(self.data) 
+
+converter toProperties*(self:Filter):Properties =
+  result.data = mlt_filter_properties(self.data)
+
 
 proc close*(a:Filter) = 
-  mlt_filter_close(a)
+  mlt_filter_close(a.data)
+
+# Sugar
+proc `>`*(a:Service; b:Filter) =
+  connect(b,a)
 
 #[
 proc mlt_filter_init*(self: mlt_filter; child: pointer): cint 
 proc mlt_filter_new*(): mlt_filter 
 
-proc mlt_filter_properties*(self: mlt_filter): mlt_properties 
 proc mlt_filter_process*(self: mlt_filter; that: mlt_frame): mlt_frame 
 
 proc mlt_filter_set_in_and_out*(self: mlt_filter; `in`: mlt_position;

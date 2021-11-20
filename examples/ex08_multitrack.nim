@@ -1,16 +1,8 @@
-# nim c -r ex05
-{.passL: "-pthread".}
-import mlt
-import os
+# nim c -r --threads:on ex08_multitrack
+import mlt, os
 
-var f:Repository = initFactory("/usr/lib/mlt-7")
-if f == nil:
-    quit("""mlt_factory_init returned "nil"""")
-
-
-var p:Profile = newProfile() 
-
-
+var f = initFactory()
+var p = newProfile() 
 
 # Multi track
 var tr = newTractor()
@@ -24,9 +16,7 @@ var mt = toMultitrack(tr)
 # Create a composite transition
 var transComposite = newFactoryTransition(p, "composite", "10%/10%:15%x15%" )
 
-# Create track 0
-#    mlt_producer track0 = create_playlist( argc, argv );
-
+# Playlist
 var pl = newPlaylist()
 
 var clip1 = newFactoryProducer(p, resource = "avformat:/home/jose/Descargas/sygic.mp4")
@@ -48,7 +38,7 @@ var ptime = getPlaytime(track0)
 # Set the properties of track1
 var props = toProperties( track1 )
 props["text"] = "Hello\nWorld"
-setPosition( props, "in", 0 )
+props.setPosition( "in", 0 )
 setPosition( props, "out", ptime - 1 )
 setPosition( props, "length", ptime )
 props["a_track"] = 0
@@ -68,7 +58,6 @@ connect( mt, track1, 1 )
 # Now plant the transition
 plantTransition( fld, transComposite, 0, 1 )
 
-
 # Close our references
 close( track0 )
 close( track1 )
@@ -77,44 +66,12 @@ close( transComposite )
 # Return the tractor
 var producer1:Producer = tr
 
+var sdl = newFactoryConsumer(p, "sdl2")
 
-#mlt_transition transition = mlt_factor_transition( "luma", NULL );
-#[ var transLuma = newFactoryTransition(p, "luma")
-mix(pl, 0, 50, transLuma)
-close(transLuma) ]#
-
-
-# Create the default consumer
-
-var sdlOut:Consumer = newFactoryConsumer(p, "sdl2")
-if sdlOut == nil:
-    quit("""mlt_factory_consumer returned "nil"""")
-
-# Connect the producer to the consumer
-#if world == nil:
-#    quit("""mlt_factory_producer returned "nil"""")
-
-#connect( hello, mlt_producer_service( world ) )
-
-#[
-var filter = newFactoryFilter(p, "frei0r.pixeliz0r")
-
-set(filter, "BlockSizeX", 0.1 )
-set(filter, "BlockSizeY", 0.1 )
-filter["BlockSizeY"] = 0.2
-]#
-
-sdlOut > toService(producer1)  #connect( hello, filter) 
-#connect( filter, world )
-
+producer1.toService > sdl
 
 # Start the consumer
-start(sdlOut)
+sdl.start
 
-while isStopped(sdlOut):
+while not sdl.stopped:
   sleep(1)
-
-# Closing everything
-close(pl)
-close( sdlOut )
-closeFactory()    
