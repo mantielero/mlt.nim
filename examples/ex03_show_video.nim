@@ -15,13 +15,19 @@ var clip1 = newFactoryProducer(p, resource = "avformat:/home/jose/Descargas/sygi
 
 clip1 > sdl # Connect producer to consumer
 
-sdl.start # Start the consumer
 
 # Stop the consumer when finished
-let nFrames =  clip1.length - 1
+sdl["terminate_on_pause"] = 1
+
+sdl.start # Start the consumer
+
+while not sdl.stopped:
+  sleep(1)
+
+#[ let nFrames =  clip1.length - 1
 while not stopped(sdl):
   let pos = sdl.position #mlt_consumer_position(hello.data).int
   #echo world.length     #<----------- NOT WORKING
   if pos == nFrames:
     sdl.stop
-  sleep(1)
+  sleep(1) ]#

@@ -2,21 +2,33 @@
 to organise producers in playlists.    
 ]#
 import ../wrapper/mlt, producer, consumer
-import typs, os, std/strformat
+import typs, factory
+import os, std/strformat
 
 proc newPlaylist*():Playlist = 
   result.data = mlt_playlist_init()
 
-proc append*(self: Playlist; producer: Producer) =
+proc append*(self:Playlist; producer: Producer) =
   let res = mlt_playlist_append( self.data,  producer.data )
   if res > 0:
     quit("""unable to append producer to the playlist""")
 
 
-proc append*(self: Playlist; producer: Producer; `in`, `out`:int) =  
+proc append*(self:Playlist; producer: Producer; `in`, `out`:int) =  
   let res = mlt_playlist_append_io(self.data, producer.data, `in`.cint, `out`.cint)
   if res > 0:
     quit("""unable to append producer to the playlist""")
+
+
+proc add*(self:Playlist; profile:Profile; resource:string) =
+  var clip = newFactoryProducer(profile, resource = "avformat:/home/jose/Descargas/sygic.mp4")
+  self.append(clip)
+  #close(clip)
+
+proc add*(self:Playlist; profile:Profile; resource:string; `in`, `out`:int) =
+  var clip = newFactoryProducer(profile, resource = "avformat:/home/jose/Descargas/sygic.mp4")
+  self.append(clip, `in`, `out`)
+  #close(clip)
 
 
 proc close*(self:Playlist) =

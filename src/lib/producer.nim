@@ -1,5 +1,5 @@
 import ../wrapper/mlt
-import typs, os
+import typs, os, factory
 
 
 proc close*(self:Producer) =
@@ -21,8 +21,9 @@ converter toProperties*(self:Producer):Properties =
 
 
 
-#proc `=destroy`[T:Producer](x: var T) =
-#  x.close()
+# Sugar
+proc newAV*(profile:Profile; resource:string):Producer =
+  newFactoryProducer(profile, "avformat", resource)
 
 #[
 proc mlt_producer_init*(self: mlt_producer; child: pointer): cint

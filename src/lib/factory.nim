@@ -22,15 +22,14 @@ As shown above, a producer can be created using the ‘default normalising’ pr
 ]##
 #{.passL:"-pthread".}
 import ../wrapper/mlt
-import typs
+import typs, repository
 
+proc initFactory*(directory:string =   ""):Repository = 
+  if directory == "":
+    result.data = mlt_factory_init(nil)
+  else:  
+    result.data = mlt_factory_init(directory.cstring)
 
-
-proc initFactory*():Repository = 
-  result.data = mlt_factory_init(nil)
-
-proc initFactory*(directory:string):Repository = 
-  result.data = mlt_factory_init(directory.cstring)
   if result.data == nil:
     quit("mlt_factory_init returned \"nil\"")
 
@@ -48,12 +47,12 @@ proc newFactoryProducer*(profile: Profile; service: string = "loader";
   - resource:	an optional argument to the producer constructor, typically a string
   
   ]##
-  #var tmp:Producer
   result.data = mlt_factory_producer(profile.data, service.cstring, resource.cstring)
   if result.data == nil:
     quit("mlt_factory_producer returned \"nil\"")
 
-  #return tmp
+
+
 
 proc newFactoryConsumer*(profile: Profile; service: string = "sdl2";
                            input: string = ""): Consumer =
@@ -100,6 +99,8 @@ proc getDirectory*():string =
 
 proc getRepository*():Repository = 
   result.data = mlt_factory_repository()
+
+
 
 
 

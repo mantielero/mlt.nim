@@ -1,39 +1,26 @@
-# nim c -r ex02
-{.passL: "-pthread".}
+# nim c -r ex12_nle_template
 import mlt
 import os
 
 nle "/usr/lib/mlt-7":
-  var dvProfile:Profile = newProfile()
+  var dvProfile = newProfile()
   # Create the default consumer
-  var c:Consumer = newConsumer(dvProfile, "sdl2")
-
+  var sdl = newConsumer(dvProfile, "sdl2")
+  sdl["terminate_on_pause"] = 1
   # Create via the default producer
-  var p:Producer = newFactoryProducer(dvProfile, resource = "avformat:/home/jose/Descargas/sygic.mp4") #salida.mp4") #"color:red")
-  echo "Producer creado: ", repr p.data
-  p > c 
-  echo "Producer conectado"
+  #var clip = newFactoryProducer(dvProfile, resource = "avformat:/home/jose/Descargas/sygic.mp4")
+  var clip = newAV(dvProfile, "/home/jose/Descargas/sygic.mp4") 
+  clip > sdl 
 
   # Start the consumer
-  start(c)
-  echo "Arrancamos el consumidor"
-  var n = 0
-  while not stopped(c):
-    sleep(1)
-    echo n
-    n += 1
-    if n == 3000:
-      discard mlt_consumer_stop(c.data) 
-  #sleep(1000)
-  #sleep(1000)
-  echo "EL consumidor ha terminado"
-  # Close the consumer
-  #c.close
 
-  # Close the producer
-  #p.close
+  sdl.start
+  while not sdl.stopped:
+    sleep(1)
+
+
  
-echo "DONE"
+
 #[
 Fix events:
 
