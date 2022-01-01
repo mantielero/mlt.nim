@@ -12,7 +12,7 @@ pl.append(clip1, 0, 60)
 close(clip1)
 
 var clip2 = newFactoryProducer(p, resource = "color:red")
-pl.append(clip2, 0, 60)
+pl.append(clip2, 60, 120)
 close(clip2)
 
 # Consumer
