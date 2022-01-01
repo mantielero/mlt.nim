@@ -82,3 +82,82 @@ https://github.com/mltframework/mlt/tree/master/demo
 
 # TODO
 - Playlist: adding
+
+# Tutorial
+## Introduction
+Better read about the [MLT framework](https://www.mltframework.org/docs/framework/).
+## Basic example
+Taking a look at example #02:
+1. Create repository (with `initFactory`)
+2. Create new profile (states the kind of media -resolution, frame rate, ...-)
+3. Create a consumer (ex. SDL2)
+4. Create the producer (ex. color red, a video, ...)
+5. Connect the producer with the consumer
+6. Start the consumer
+7. Wait for the stop event
+
+## Filters
+They can be added between the consumer and the producer (see example #4). An example with *frei0r* filters is shown in (example #5).
+
+Filters can also be attached as per (example #5: `ex05_filter_frei0r_attach.nim`).
+
+## Playlists
+A playlist instance is created and clips (producers) are added to it. See example #6.
+
+- [ ] To understand better how does the timing work.
+
+### Transitions
+When there are two clips (one after the other), transtions handles the way in which the transition takes place. See example #7.
+
+## Multitrack
+This is more the heavyweight NLE functionality. 
+
+See example #8:
+- Two tracks are created: one contains a playlist and the other contains some text.
+- Besides a `composite` transtion is used in order to overlay the text over the playlist. 
+
+- [ ] To better understand the relationship between Tractor and Multitrack. A multitrack is not a producer, so it is pulled by a tractor.
+
+
+## Events
+TODO: I don't really understand how can I handle this.
+
+
+# TODO
+## Audio example
+```bash
+melt avformat:a.mp3 out=400 -move in=0 out=400 -track avformat:b.mp3 out=400 -transition mix in=0 out=400 a_track=0 b_track=1
+
+melt 1.mp4 -attach volume level=20db -track bensound-buddy.mp3 -attach volume level=-10db
+
+melt original.mp4 in = clipin out=clipout -track preview.mp3 in=clipin out=clipout
+```
+
+## Pictures example
+
+Images:
+```
+melt \
+photos/.all.jpg ttl=75 \
+-filter luma:luma1.pgm luma.softness=0.1 luma.invert=0 \
+$*
+
+melt \
+photos/.all.jpg ttl=75 \
+-attach crop center=1 \
+-attach affine transition.cycle=225 transition.geometry="0=0/0:100%x100%;74=-100/-100:120%x120%;75=-60/-60:110%x110%;149=0/0:110%x110%;150=0/-60:110%x110%;224=-60/0:110%x110%" \
+-filter luma cycle=75 duration=25 \
+-track music1.ogg \
+-transition mix \
+$*
+
+melt photos/.all.jpg ttl=100 \
+-filter watermark:colour:black reverse=1 composite.geometry="0=15%/15%:10%/10%; 0.1625=0/0:100%x100%; -.1625=; -1=70%/70%:10%x10%" composite.mirror_off=1 composite.cycle=100 composite.fill=1 composite.valign=c composite.halign=c \
+$*
+```
+
+https://github.com/ttill/MLT/blob/4a85b95330b0b6f7b232eda719c63a66696bf0f1/src/tests/pixbuf.c
+
+# Examples
+## Python
+https://github.com/mltframework/mlt/tree/master/src/swig/python
