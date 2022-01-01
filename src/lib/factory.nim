@@ -22,7 +22,9 @@ As shown above, a producer can be created using the ‘default normalising’ pr
 ]##
 #{.passL:"-pthread".}
 import ../wrapper/mlt
-import typs, repository
+import typs, consumer, properties
+#import lib/[version, profile, consumer, producer, filter, properties, service, playlist, transition, tractor]
+#import lib/[field, multitrack, events, repository]
 
 proc initFactory*(directory:string =   ""):Repository = 
   if directory == "":
@@ -51,8 +53,42 @@ proc newFactoryProducer*(profile: Profile; service: string = "loader";
   if result.data == nil:
     quit("mlt_factory_producer returned \"nil\"")
 
+proc newMedia*(profile: Profile; resource: string = ""): Producer =
+  ##[
+  Fetch a producer from the repository.
+
+  If you give NULL to service, then it will use core module's special "loader"producer to load resource. One can override this default producer by setting the environment variable MLT_PRODUCER.
+
+  Parameters
+  - profile:	the mlt_profile to use
+  - resource:	an optional argument to the producer constructor, typically a string
+  
+  ]##
+  return newFactoryProducer(profile, "loader", resource)
 
 
+#[ proc newFactoryProducer*(profile: Profile; service: string = "loader";
+                           resource: File): Producer =
+  ##[
+  Fetch a producer from the repository.
+
+  If you give NULL to service, then it will use core module's special "loader"producer to load resource. One can override this default producer by setting the environment variable MLT_PRODUCER.
+
+  Parameters
+  - profile:	the mlt_profile to use
+  - service:	the name of the producer (optional, defaults to MLT_PRODUCER = "loader" by default)
+  - resource:	an optional argument to the producer constructor, typically a string
+  
+  ]##
+  result.data = mlt_factory_producer(profile.data, service.cstring, cast[pointer](resource))
+  if result.data == nil:
+    quit("mlt_factory_producer returned \"nil\"") ]#
+
+#[
+proc mlt_factory_producer*(profile: mlt_profile; service: cstring;
+                           resource: pointer): mlt_producer {.importc, cdecl,
+    impmltDyn.}
+]#
 
 proc newFactoryConsumer*(profile: Profile; service: string = "sdl2";
                            input: string = ""): Consumer =
@@ -74,12 +110,26 @@ proc newFactoryConsumer*(profile: Profile; service: string = "sdl2";
   if result.data == nil:
     quit("mlt_factory_consumer returned \"nil\"")
 
-proc newFactoryFilter*(profile:Profile; name: string; input:string = "" ):Filter =
+
+proc outSDL2*( prof:Profile ):Consumer =
+  ## creates a SDL2 consumer
+  var sdl = newFactoryConsumer(prof, "sdl2")
+  sdl["terminate_on_pause"] = 1
+  return sdl
+
+proc newFactoryFilter*(profile:Profile; name: string):Filter =
+  ## Fetch a filter from the repository.
+  result.data = mlt_factory_filter(profile.data, name.cstring, nil)
+
+proc newFactoryFilter*(profile:Profile; name: string; input:string ):Filter =
   ## Fetch a filter from the repository.
   result.data = mlt_factory_filter(profile.data, name.cstring, input.cstring) 
 
+proc newFactoryTransition*(profile:Profile; name: string ):Transition =
+  result.data = mlt_factory_transition(profile.data, name.cstring, nil)
 
-proc newFactoryTransition*(profile:Profile; name: string; input:string = "" ):Transition =
+
+proc newFactoryTransition*(profile:Profile; name: string; input:string ):Transition =
   result.data = mlt_factory_transition(profile.data, name.cstring, input.cstring)
 
 proc closeFactory*() =
