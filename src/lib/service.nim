@@ -1,12 +1,12 @@
 import ../wrapper/mlt
-import typs, os, filter
+import typs, os#, filter, producer
 
 
 converter toProperties*(self:Service):Properties =
   result.data = mlt_service_properties(self.data)
 
-converter toProperties*(self:Filter):Properties =
-  self.toService.toProperties
+#converter toProperties*(self:Filter):Properties =
+#  self.toService.toProperties
 
 
 
