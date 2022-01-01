@@ -45,6 +45,15 @@ type
   Position* = mlt_position
   #  data*: mlt_position
 
+  # CUSTOM API
+  NLE* = object
+    repo*: Repository
+    currentProfile*: Profile
+    consumers*: seq[Consumer]
+    producers*: seq[Producer]
+
+
+
 
 proc `=destroy`*(p: var Producer) =
   if not p.data.isNil:
