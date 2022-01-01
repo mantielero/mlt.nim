@@ -21,6 +21,9 @@ proc newConsumer*(prof:Profile; id:string = "";arg:string = ""):Consumer =
     else:
       result.data = mlt_factory_consumer( prof.data, tmp[0].cstring, tmp[1].cstring )
 
+
+
+
 #[
 proc mlt_consumer_init*(self: mlt_consumer; child: pointer; profile: mlt_profile): cint 
 proc mlt_consumer_new*(profile: mlt_profile): mlt_consumer   
@@ -72,7 +75,10 @@ proc position*(self:Consumer):int =
 proc purge*(self:Consumer) =
   mlt_consumer_purge(self.data)
 
-
+proc run*(self:Consumer) =
+  self.start
+  while not self.stopped:
+    sleep(1)  
 #[
 proc mlt_consumer_put_frame*(self: mlt_consumer; frame: mlt_frame): cint 
 proc mlt_consumer_get_frame*(self: mlt_consumer): mlt_frame 
