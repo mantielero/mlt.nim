@@ -12,6 +12,7 @@ converter toService*(self:Filter):Service =
 
 converter toProperties*(self:Filter):Properties =
   result.data = mlt_filter_properties(self.data)
+  #result.data = mlt_service_properties(mlt_filter_service(self.data))  #mlt_filter_properties(self.data)
 
 
 proc close*(a:Filter) = 

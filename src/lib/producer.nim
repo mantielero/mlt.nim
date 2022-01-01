@@ -22,8 +22,8 @@ converter toProperties*(self:Producer):Properties =
 
 
 # Sugar
-proc newAV*(profile:Profile; resource:string):Producer =
-  newFactoryProducer(profile, "avformat", resource)
+#proc newAV*(profile:Profile; resource:string):Producer =
+#  newFactoryProducer(profile, "avformat", resource)
 
 #[
 proc mlt_producer_init*(self: mlt_producer; child: pointer): cint
