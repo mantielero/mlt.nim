@@ -1,4 +1,7 @@
 # https://github.com/mltframework/mlt/blob/master/src/mlt%2B%2B/MltProperties.cpp
+##[
+Properties is a combination list/dictionary of name/mlt_property pairs. It is also a base class for many of the other MLT classes.
+]##
 import ../wrapper/mlt
 import typs, os, std/strformat
 
@@ -7,20 +10,15 @@ proc close*(self:Properties) =
   mlt_properties_close(self.data)
 
 # setters
-proc set*(self:Properties; name:string; value:float64) =
+proc set*(self:Properties; name:string; value:SomeFloat) =
   let res = mlt_properties_set_double(self.data, name.cstring, value.cdouble)
   if res > 0:
-    quit("""unable to set property "{name}" """)
+    quit(&"""unable to set property "{name}" """)
 
 proc set*(self:Properties; name, value:string) =
   let res = mlt_properties_set_string(self.data, name.cstring, value.cstring)
   if res > 0:
-    quit("""unable to set property "{name}" """)
-
-#[ proc set*(self:Properties; name, value:string) =
-  let res = mlt_properties_set_string(self, name.cstring, value.cstring)
-  if res > 0:
-    quit("""unable to set property "{name}" """) ]#
+    quit(&"""unable to set property "{name}" """)
 
 
 proc set*(self:Properties; name:string; value:int) =
@@ -29,9 +27,23 @@ proc set*(self:Properties; name:string; value:int) =
     quit("""unable to set property "{name}" """)
 
 proc set*(self:Properties; name:string; value:int64) =
-  let res = mlt_properties_set_int64(self.data, name.cstring, value)
+  let res = mlt_properties_set_int64(self.data, name.cstring, value.cint)
   if res > 0:
     quit("""unable to set property "{name}" """)
+
+
+
+proc set*(self:Properties; name:string; values:seq[SomeNumber]) =
+  var tmp = ""
+  for i in 0 ..< (values.len - 2):
+    tmp &= $values[i]
+    tmp &= ", "
+  tmp &= $values[values.len - 1]
+  let res = mlt_properties_pass_list(self.data, name.cstring, tmp.cstring)
+  if res > 0:
+    quit("""unable to set property "{name}" """)
+
+
 
 # set_position
 proc setPosition*[T:SomeInteger](self:Properties; name:string; value:T) =
@@ -39,7 +51,7 @@ proc setPosition*[T:SomeInteger](self:Properties; name:string; value:T) =
   if res > 0:
     quit("""unable to set position "{name}" """)  
 
-proc `[]=`*[T:float|string|int|int64](self:Properties; name:string; value:T) =
+proc `[]=`*[T:string|SomeNumber](self:Properties; name:string; value:T) =
   set(self, name, value)
 
 
@@ -74,7 +86,8 @@ proc getInt64*(self:Properties; key:string):int64 =
 proc getFloat*(self:Properties; key:string):float =
   mlt_properties_get_double(self.data, key.cstring)
 
-
+proc getProperties*(self:Properties; key:string):Properties =
+  result.data = mlt_properties_get_properties(self.data, key.cstring )
 
 # Sugar
 proc `len`*(self:Properties):int =
@@ -103,6 +116,22 @@ proc length*(self:Properties):int =
     return -1
   
 
+proc getData*(self: Properties; name: string):Properties =
+  result.data = cast[ptr mlt_properties_s](mlt_properties_get_data( self.data, name.cstring, cast[ptr cint](nil) ))
+
+
+
+
+proc refCount*(self:Properties):int =
+  mlt_properties_ref_count(self.data).int
+
+
+proc setProperties*(self:Properties; name:string; val:Properties) =
+  var res = mlt_properties_set_properties(self.data, name.cstring,   val.data).int
+
+#proc *(self: mlt_properties; name: cstring;
+#                              length: ptr cint): pointer
+
 #[
 proc mlt_properties_init*(a1: mlt_properties; child: pointer): cint
 proc mlt_properties_new*(): mlt_properties
@@ -124,8 +153,7 @@ proc mlt_properties_pass*(self: mlt_properties; that: mlt_properties;
                           prefix: cstring): cint
 proc mlt_properties_pass_property*(self: mlt_properties; that: mlt_properties;
                                    name: cstring)
-proc mlt_properties_pass_list*(self: mlt_properties; that: mlt_properties;
-                               list: cstring): cint
+
 
 proc mlt_properties_set*(self: mlt_properties; name: cstring; value: cstring): cint
 
@@ -149,8 +177,7 @@ proc mlt_properties_get_position*(self: mlt_properties; name: cstring): mlt_posi
 proc mlt_properties_set_data*(self: mlt_properties; name: cstring;
                               value: pointer; length: cint; a5: mlt_destructor;
                               a6: mlt_serialiser): cint
-proc mlt_properties_get_data*(self: mlt_properties; name: cstring;
-                              length: ptr cint): pointer
+
 
 proc mlt_properties_rename*(self: mlt_properties; source: cstring; dest: cstring): cint
 
@@ -184,7 +211,9 @@ proc mlt_properties_set_color*(a1: mlt_properties; name: cstring;
                                value: mlt_color): cint
 
 
-
+]#
+#--------------------------------
+#[
 
 proc mlt_properties_anim_get*(self: mlt_properties; name: cstring;
                               position: cint; length: cint): cstring
@@ -222,9 +251,8 @@ proc mlt_properties_to_utf8*(properties: mlt_properties; name_from: cstring;
                              name_to: cstring): cint
 
 
-proc mlt_properties_set_properties*(self: mlt_properties; name: cstring;
-                                    properties: mlt_properties): cint
-proc mlt_properties_get_properties*(self: mlt_properties; name: cstring): mlt_properties
+
+
 proc mlt_properties_get_properties_at*(self: mlt_properties; index: cint): mlt_properties
 
 ]#
