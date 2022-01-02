@@ -13,13 +13,13 @@ converter toProducer*(self:Tractor):Producer =
 converter toService*(self:Tractor):Service =
   result.data = mlt_tractor_service(self.data)
 
-proc toField*(self:Tractor):Field =
+converter toField*(self:Tractor):Field =
   result.data = mlt_tractor_field(self.data)
 
-proc toMultitrack*(self:Tractor):Multitrack =
+converter toMultitrack*(self:Tractor):Multitrack =
   result.data = mlt_tractor_multitrack(self.data)
 
-proc toProperties*(self:Tractor):Properties =
+converter toProperties*(self:Tractor):Properties =
  result.data =  mlt_tractor_properties(self.data)
 
 proc close*(self:Tractor) =
