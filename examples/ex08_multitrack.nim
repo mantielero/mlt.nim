@@ -1,77 +1,65 @@
+#[
+It creates two tracks:
+  - Track 0: Contains a playlist with two videos (a cartoon and a red video)
+  - Track 1: 
+]#
 # nim c -r --threads:on ex08_multitrack
-import mlt, os
+import mlt
 
-var f = initFactory()
-var p = newProfile() 
+proc main =
+  var f = initFactory()
+  var p = newProfile() 
 
-# Multi track
-var tr = newTractor()
+  # Create the tractor
+  var tr = newTractor()
 
-# Obtain the field
-var fld = toField(tr)
+  # Create a composite transition
+  # https://www.mltframework.org/plugins/TransitionComposite/
+  # Position: 10%/10%
+  # Size: 15%/15%
+  var transComposite = newFactoryTransition(p, "composite", "10%/10%:15%x15%" )
 
-# Obtain the multitrack
-var mt = toMultitrack(tr)
+  # Playlist
+  var pl = newPlaylist()
 
-# Create a composite transition
-var transComposite = newFactoryTransition(p, "composite", "10%/10%:15%x15%" )
+  var clip1 = p.newMedia("./resources/big_buck_bunny_720p_2mb.mp4")
+  pl.append(clip1, 0, 60)
+  #close(clip1)
 
-# Playlist
-var pl = newPlaylist()
+  var clip2 = p.newMedia( "color:red")
+  pl.append(clip2, 0, 60)
+  #close(clip2)
 
-var clip1 = newFactoryProducer(p, resource = "avformat:/home/jose/Descargas/sygic.mp4")
-pl.append(clip1, 0, 60)
-close(clip1)
+  #var track0:Producer = pl
+  var ptime = getPlaytime(pl)   # Get the length of track0
 
-var clip2 = newFactoryProducer(p, resource = "color:red")
-pl.append(clip2, 0, 60)
-close(clip2)
+  # Create the watermark track - note we NEED loader for scaling here
+  # https://www.mltframework.org/plugins/ProducerPango/
+  var track1 = newMedia(p, "pango" )
+  track1["text"] = "Hello\nWorld"
+  track1.setPosition( "in", 0 )
+  track1.setPosition( "out", ptime - 1 )
+  track1.setPosition( "length", ptime )
 
-var track0:Producer = pl
+  # Make the composition cover from the beginning to the end of the playlist
+  transComposite.setPosition( "in", 0 )
+  transComposite.setPosition( "out", ptime - 1 )
 
-# Create the watermark track - note we NEED loader for scaling here
-var track1 = newFactoryProducer(p, "loader", "pango" )
+  # Add our tracks to the multitrack (automatically converted)
+  tr.connect( pl, 0 )      # We use the playlist as track0
+  tr.connect( track1, 1 )  # We use the pango producer as track1 
 
-# Get the length of track0
-var ptime = getPlaytime(track0)
+  # Now plant the transition (the composition between the tracks)
+  tr.plant( transComposite, 0, 1 )  # Plant transition between tracks 0 y 1
 
-# Set the properties of track1
-var props = toProperties( track1 )
-props["text"] = "Hello\nWorld"
-props.setPosition( "in", 0 )
-setPosition( props, "out", ptime - 1 )
-setPosition( props, "length", ptime )
-props["a_track"] = 0
-props["b_track"] = 0
+  # Consumer
+  var sdl = newFactoryConsumer(p, "sdl2")
+  sdl["terminate_on_pause"] = 1
 
+  # From tractor to SDL2
+  tr > sdl
 
-# Now set the properties on the transition
-var propsTransition = toProperties( transComposite )
-setPosition( propsTransition, "in", 0 )
-setPosition( propsTransition, "out", ptime - 1 )
+  # Start the consumer
+  sdl.run
 
-
-# Add our tracks to the multitrack
-connect( mt, track0, 0 )
-connect( mt, track1, 1 )
-
-# Now plant the transition
-plantTransition( fld, transComposite, 0, 1 )
-
-# Close our references
-close( track0 )
-close( track1 )
-close( transComposite )
-
-# Return the tractor
-var producer1:Producer = tr
-
-var sdl = newFactoryConsumer(p, "sdl2")
-
-producer1.toService > sdl
-
-# Start the consumer
-sdl.start
-
-while not sdl.stopped:
-  sleep(1)
+main()
