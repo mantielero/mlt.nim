@@ -138,9 +138,9 @@ proc newFactoryConsumer*(profile: Profile; service: string;
 
 proc outSDL2*( prof:Profile ):Consumer =
   ## creates a SDL2 consumer
-  var sdl = newFactoryConsumer(prof, "sdl2")
-  sdl["terminate_on_pause"] = 1
-  return sdl
+  result = newFactoryConsumer(prof, "sdl2")
+  result["terminate_on_pause"] = 1
+  #return sdl
 
 proc newFactoryFilter*(profile:Profile; name: string):Filter =
   ## Fetch a filter from the repository.
