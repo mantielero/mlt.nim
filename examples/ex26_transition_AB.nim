@@ -3,10 +3,11 @@ import mlt
 import os
 
 proc main =
-  let f = initFactory("/usr/lib/mlt-7")
+  let repo = initFactory("/usr/lib/mlt-7")
 
   # Create the consumer
   let p = newProfile("hdv_720_50p")
+  #let sdl = p.outSDL2()
   var sdl = p.newFactoryConsumer("sdl2") #p.outSDL2()
 
   sdl["terminate_on_pause"] = 1 # Stop the consumer when finished
