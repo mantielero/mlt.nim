@@ -21,12 +21,12 @@ proc append*(self:Playlist; producer: Producer; `in`, `out`:int) =
 
 
 proc add*(self:Playlist; profile:Profile; resource:string) =
-  var clip = newFactoryProducer(profile, resource = "avformat:/home/jose/Descargas/sygic.mp4")
+  var clip = newFactoryProducer(profile, resource)
   self.append(clip)
   #close(clip)
 
 proc add*(self:Playlist; profile:Profile; resource:string; `in`, `out`:int) =
-  var clip = newFactoryProducer(profile, resource = "avformat:/home/jose/Descargas/sygic.mp4")
+  var clip = newFactoryProducer(profile, resource)
   self.append(clip, `in`, `out`)
   #close(clip)
 
@@ -53,6 +53,10 @@ proc mix*(self:Playlist; clip, length:int; trn: Transition) =
   if res > 0:
     quit("""unable to apply transition to playlist""")
 
+proc count*(self:Playlist):int =
+  mlt_playlist_count(self.data).int
+
+
 #[
 
 proc mlt_playlist_mix_in*(self: mlt_playlist; clip: cint; length: cint): cint
@@ -68,7 +72,7 @@ proc mlt_playlist_new*(profile: mlt_profile): mlt_playlist
 proc mlt_playlist_producer*(self: mlt_playlist): mlt_producer
 proc mlt_playlist_service*(self: mlt_playlist): mlt_service
 proc mlt_playlist_properties*(self: mlt_playlist): mlt_properties
-proc mlt_playlist_count*(self: mlt_playlist): cint
+
 proc mlt_playlist_clear*(self: mlt_playlist): cint
 
 

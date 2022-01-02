@@ -26,18 +26,53 @@ import typs, consumer, properties
 #import lib/[version, profile, consumer, producer, filter, properties, service, playlist, transition, tractor]
 #import lib/[field, multitrack, events, repository]
 
-proc initFactory*(directory:string =   ""):Repository = 
-  if directory == "":
-    result.data = mlt_factory_init(nil)
-  else:  
-    result.data = mlt_factory_init(directory.cstring)
+proc initFactory*():Repository = 
+  result.data = mlt_factory_init(nil)
+
+  if result.data == nil:
+    quit("mlt_factory_init returned \"nil\"")
+
+proc initFactory*(directory:string):Repository = 
+  result.data = mlt_factory_init(directory.cstring)
 
   if result.data == nil:
     quit("mlt_factory_init returned \"nil\"")
 
 
-proc newFactoryProducer*(profile: Profile; service: string = "loader";
-                           resource: string = ""): Producer =
+proc newFactoryProducer*(profile: Profile): Producer =
+  ##[
+  Fetch a producer from the repository.
+
+  If you give NULL to service, then it will use core module's special "loader"producer to load resource. One can override this default producer by setting the environment variable MLT_PRODUCER.
+
+  Parameters
+  - profile:	the mlt_profile to use
+  - service:	the name of the producer (optional, defaults to MLT_PRODUCER = "loader" by default)
+  - resource:	an optional argument to the producer constructor, typically a string
+  
+  ]##
+  result.data = mlt_factory_producer(profile.data, nil, nil)
+  if result.data == nil:
+    quit("mlt_factory_producer returned \"nil\"")
+
+proc newFactoryProducer*(profile: Profile; resource: string ): Producer =
+  ##[
+  Fetch a producer from the repository.
+
+  If you give NULL to service, then it will use core module's special "loader"producer to load resource. One can override this default producer by setting the environment variable MLT_PRODUCER.
+
+  Parameters
+  - profile:	the mlt_profile to use
+  - service:	the name of the producer (optional, defaults to MLT_PRODUCER = "loader" by default)
+  - resource:	an optional argument to the producer constructor, typically a string
+  
+  ]##
+  result.data = mlt_factory_producer(profile.data, "loader".cstring, resource.cstring)
+  if result.data == nil:
+    quit("mlt_factory_producer returned \"nil\"")
+
+proc newFactoryProducer*(profile: Profile; service: string;
+                           resource: string): Producer =
   ##[
   Fetch a producer from the repository.
 
@@ -57,7 +92,7 @@ proc newMedia*(profile: Profile; resource: string = ""): Producer =
   ##[
   Fetch a producer from the repository.
 
-  If you give NULL to service, then it will use core module's special "loader"producer to load resource. One can override this default producer by setting the environment variable MLT_PRODUCER.
+  It will use core module's special "loader" producer to load resource. One can override this default producer by setting the environment variable MLT_PRODUCER.
 
   Parameters
   - profile:	the mlt_profile to use
@@ -67,31 +102,7 @@ proc newMedia*(profile: Profile; resource: string = ""): Producer =
   return newFactoryProducer(profile, "loader", resource)
 
 
-#[ proc newFactoryProducer*(profile: Profile; service: string = "loader";
-                           resource: File): Producer =
-  ##[
-  Fetch a producer from the repository.
-
-  If you give NULL to service, then it will use core module's special "loader"producer to load resource. One can override this default producer by setting the environment variable MLT_PRODUCER.
-
-  Parameters
-  - profile:	the mlt_profile to use
-  - service:	the name of the producer (optional, defaults to MLT_PRODUCER = "loader" by default)
-  - resource:	an optional argument to the producer constructor, typically a string
-  
-  ]##
-  result.data = mlt_factory_producer(profile.data, service.cstring, cast[pointer](resource))
-  if result.data == nil:
-    quit("mlt_factory_producer returned \"nil\"") ]#
-
-#[
-proc mlt_factory_producer*(profile: mlt_profile; service: cstring;
-                           resource: pointer): mlt_producer {.importc, cdecl,
-    impmltDyn.}
-]#
-
-proc newFactoryConsumer*(profile: Profile; service: string = "sdl2";
-                           input: string = ""): Consumer =
+proc newFactoryConsumer*(profile: Profile; service: string): Consumer =
   ##[
   Fetch a consumer from the repository.
 
@@ -102,11 +113,25 @@ proc newFactoryConsumer*(profile: Profile; service: string = "sdl2";
   Returns
   - a new consumer
   ]##
-  if input == "":
-    result.data = mlt_factory_consumer(profile.data, service.cstring, nil)
-  else:  
-    result.data = mlt_factory_consumer(profile.data, service.cstring, input.cstring)
-  echo repr result.data
+
+  result.data = mlt_factory_consumer(profile.data, service.cstring, nil)
+  if result.data == nil:
+    quit("mlt_factory_consumer returned \"nil\"")
+
+proc newFactoryConsumer*(profile: Profile; service: string;
+                           input: string): Consumer =
+  ##[
+  Fetch a consumer from the repository.
+
+  Parameters
+  - profile	the mlt_profile to use
+  - service	the name of the consumer (optional, defaults to MLT_CONSUMER)
+  - input	an optional argument to the consumer constructor, typically a string
+  Returns
+  - a new consumer
+  ]##
+ 
+  result.data = mlt_factory_consumer(profile.data, service.cstring, input.cstring)
   if result.data == nil:
     quit("mlt_factory_consumer returned \"nil\"")
 
