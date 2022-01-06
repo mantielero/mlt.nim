@@ -20,6 +20,19 @@ proc detach*(self:Service; f:Filter) =
   if res > 0:
     quit("unable to detach filter to service")
 
+
+
+proc getFrame*(self:Service, index:int):Frame =
+  # mlt_frame_ptr = ptr ptr mlt_frame_s  = ptr mlt_frame
+  # mlt_frame = ptr mlt_frame_s
+  var frame:mlt_frame_ptr
+  #echo "service: ", repr self.data
+  var res = mlt_service_get_frame(self.data, frame, index.cint)
+  #echo "frame: ", repr frame
+  result.data = cast[mlt_frame](frame)
+  if res > 0:
+    quit("unable to get a frame from service")
+
 #[
 proc mlt_service_init*(self: mlt_service; child: pointer): cint
 proc mlt_service_lock*(self: mlt_service)
@@ -32,7 +45,7 @@ proc mlt_service_insert_producer*(self: mlt_service; producer: mlt_service;
 proc mlt_service_disconnect_producer*(self: mlt_service; index: cint): cint
 proc mlt_service_disconnect_all_producers*(self: mlt_service): cint
 proc mlt_service_get_producer*(self: mlt_service): mlt_service
-proc mlt_service_get_frame*(self: mlt_service; frame: mlt_frame_ptr; index: cint): cint
+
 proc mlt_service_properties*(self: mlt_service): mlt_properties
 proc mlt_service_consumer*(self: mlt_service): mlt_service
 proc mlt_service_producer*(self: mlt_service): mlt_service
