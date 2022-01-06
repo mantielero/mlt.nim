@@ -80,9 +80,6 @@ https://github.com/mltframework/melted/blob/65b2f6e65aa49d84541558958d7c6c8ff23a
 https://github.com/mltframework/mlt/tree/master/demo
 
 
-# TODO
-- Playlist: adding
-
 # Tutorial
 ## Introduction
 Better read about the [MLT framework](https://www.mltframework.org/docs/framework/).
@@ -124,6 +121,10 @@ TODO: I don't really understand how can I handle this.
 
 
 # TODO
+## WiP
+- `examples/ex31_vertical_stacking2.nim` and `src/contrib/stacking.nim`: the idea is the the proc behaves as a filter or as a producer. Waiting for support [here](https://sourceforge.net/p/mlt/mailman/mlt-devel/?viewmonth=202201&viewday=6)
+## Filter
+One option would be to create [transitions](https://www.mltframework.org/plugins/PluginsTransitions/) (or filters) from nim.
 ## Audio example
 ```bash
 melt avformat:a.mp3 out=400 -move in=0 out=400 -track avformat:b.mp3 out=400 -transition mix in=0 out=400 a_track=0 b_track=1
@@ -161,3 +162,33 @@ https://github.com/ttill/MLT/blob/4a85b95330b0b6f7b232eda719c63a66696bf0f1/src/t
 # Examples
 ## Python
 https://github.com/mltframework/mlt/tree/master/src/swig/python
+
+
+# Notes
+To modify
+- from:
+```
+proc mlt_service_get_frame*(self: mlt_service; frame: mlt_frame_ptr; index: cint): cint {.
+    importc, cdecl, impmltDyn.}
+```
+- to:
+```
+proc mlt_service_get_frame*(self: mlt_service; frame: var mlt_frame_ptr; index: cint): cint {.
+    importc, cdecl, impmltDyn.}
+```
+
+and:
+- from:
+```
+proc mlt_frame_get_image*(self: mlt_frame; buffer: ptr ptr uint8;
+                          format: ptr mlt_image_format; width: ptr cint;
+                          height: ptr cint; writable: cint): cint {.importc,
+    cdecl, impmltDyn.}
+```
+- to:
+```
+proc mlt_frame_get_image*(self: mlt_frame; buffer: var ptr ptr uint8;
+                          format: var ptr mlt_image_format; width: var ptr cint;
+                          height: var ptr cint; writable: cint): cint {.importc,
+    cdecl, impmltDyn.}
+```
