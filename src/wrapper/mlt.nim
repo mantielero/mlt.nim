@@ -431,7 +431,23 @@ type
     layout*: mlt_channel_layout
     release_data*: mlt_destructor
     close*: mlt_destructor
-
+#[
+type
+  mlt_profile_s* {.importc: "struct mlt_profile_s", impmltHdr, bycopy.} = object
+    description* {.importc: "description".}: cstring ## *< a brief description suitable as a label in UI menu
+    frame_rate_num* {.importc: "frame_rate_num".}: cint ## *< the numerator of the video frame rate
+    frame_rate_den* {.importc: "frame_rate_den".}: cint ## *< the denominator of the video frame rate
+    width* {.importc: "width".}: cint ## *< the horizontal resolution of the video
+    height* {.importc: "height".}: cint ## *< the vertical resolution of the video
+    progressive* {.importc: "progressive".}: cint ## *< a flag to indicate if the video is progressive scan, interlace if not set
+    sample_aspect_num* {.importc: "sample_aspect_num".}: cint ## *< the numerator of the pixel aspect ratio
+    sample_aspect_den* {.importc: "sample_aspect_den".}: cint ## *< the denominator of the pixel aspect ratio
+    display_aspect_num* {.importc: "display_aspect_num".}: cint ## *< the numerator of the image aspect ratio in case it can not be simply derived (e.g. ITU-R 601)
+    display_aspect_den* {.importc: "display_aspect_den".}: cint ## *< the denominator of the image aspect ratio in case it can not be simply derived (e.g. ITU-R 601)
+    colorspace* {.importc: "colorspace".}: cint ## *< the Y'CbCr colorspace standard: =601 for ITU-R 601, =709 for ITU-R 709, or =240 for SMPTE240M
+    is_explicit* {.importc: "is_explicit".}: cint ## *< used internally to indicate if the profile was requested explicitly or computed or defaulted
+]#
+  
   mlt_profile_s* {.bycopy, impmltHdr, importc: "struct mlt_profile_s".} = object
     description*: cstring ## ```
                           ##   < a brief description suitable as a label in UI menu
@@ -1063,7 +1079,7 @@ proc mlt_profile_close*(profile: mlt_profile) {.importc, cdecl, impmltDyn.}
 proc mlt_profile_clone*(profile: mlt_profile): mlt_profile {.importc, cdecl,
     impmltDyn.}
 proc mlt_profile_list*(): mlt_properties {.importc, cdecl, impmltDyn.}
-proc mlt_profile_from_producer*(profile: mlt_profile; producer: mlt_producer) {.
+proc mlt_profile_from_producer*(profile: var mlt_profile; producer: mlt_producer) {.
     importc, cdecl, impmltDyn.}
 proc mlt_profile_lumas_dir*(profile: mlt_profile): cstring {.importc, cdecl,
     impmltDyn.}
@@ -1492,7 +1508,7 @@ proc mlt_service_disconnect_all_producers*(self: mlt_service): cint {.importc,
     cdecl, impmltDyn.}
 proc mlt_service_get_producer*(self: mlt_service): mlt_service {.importc, cdecl,
     impmltDyn.}
-proc mlt_service_get_frame*(self: mlt_service; frame: mlt_frame_ptr; index: cint): cint {.
+proc mlt_service_get_frame*(self: mlt_service; frame: var mlt_frame_ptr; index: cint): cint {.
     importc, cdecl, impmltDyn.}
 proc mlt_service_properties*(self: mlt_service): mlt_properties {.importc,
     cdecl, impmltDyn.}
@@ -1552,9 +1568,9 @@ proc mlt_frame_set_alpha*(self: mlt_frame; alpha: ptr uint8; size: cint;
 proc mlt_frame_replace_image*(self: mlt_frame; image: ptr uint8;
                               format: mlt_image_format; width: cint;
                               height: cint) {.importc, cdecl, impmltDyn.}
-proc mlt_frame_get_image*(self: mlt_frame; buffer: ptr ptr uint8;
-                          format: ptr mlt_image_format; width: ptr cint;
-                          height: ptr cint; writable: cint): cint {.importc,
+proc mlt_frame_get_image*(self: mlt_frame; buffer: var ptr ptr uint8;
+                          format: var ptr mlt_image_format; width: var ptr cint;
+                          height: var ptr cint; writable: cint): cint {.importc,
     cdecl, impmltDyn.}
 proc mlt_frame_get_alpha*(self: mlt_frame): ptr uint8 {.importc, cdecl,
     impmltDyn.}
