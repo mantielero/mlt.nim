@@ -7,6 +7,7 @@ proc main =
 
   # Create the consumer
   let p = newProfile("hdv_720_50p")
+
   #let sdl = p.outSDL2()
   var sdl = p.newFactoryConsumer("sdl2") #p.outSDL2()
 
@@ -16,6 +17,7 @@ proc main =
   var black = p.newMedia("color:black")
   var clip1 = p.newMedia( "./resources/big_buck_bunny_720p_2mb.mp4")
   var clip2 = p.newMedia( "./resources/spbtv_sample_bipbop_av1_960x540_25fps.mp4")  
+
 
   # Create a playlist
   var pl = newPlaylist()
@@ -29,7 +31,6 @@ proc main =
   var transLuma2 = newFactoryTransition(p, "luma")  
   pl.mix(0, 50, transLuma1)
   pl.mix(1, 50, transLuma2)  
-
   pl > sdl
 
   sdl.run
