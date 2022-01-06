@@ -30,7 +30,10 @@ proc connect*(self: Tractor; service: Service) =
   let res = mlt_tractor_connect(self.data, service.data)
   if res > 0:
     quit("""unable to connect tractor to service""")  
-    
+
+converter toProducer*(tr:Tractor):Producer =
+  result.data = mlt_tractor_producer(tr.data)
+
 #[
 proc mlt_tractor_init*(): mlt_tractor {.importc, cdecl, impmltDyn.}
 
