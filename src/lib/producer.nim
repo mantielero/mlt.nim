@@ -1,5 +1,6 @@
 import ../wrapper/mlt
-import typs, os, factory
+import typs, os, factory, properties
+import std/strutils
 
 
 proc close*(self:Producer) =
@@ -14,17 +15,29 @@ proc getPlaytime*(self:Producer):int =
   mlt_producer_get_playtime(self.data)
 
 
-
 converter toProperties*(self:Producer):Properties =
   ## Get the parent service object.
   result.data = mlt_producer_properties(self.data)
 
 
+proc width*(self:Producer):int =
+  self.getInt("width").int #.parseInt
 
-# Sugar
-#proc newAV*(profile:Profile; resource:string):Producer =
-#  newFactoryProducer(profile, "avformat", resource)
+proc height*(self:Producer):int =
+  self.getInt("height").int #.parseInt
 
+proc sampleAspect*(self:Producer):tuple[num,den:int] =
+  (self.getInt("meta.media.sample_aspect_num"), self.getInt("meta.media.sample_aspect_den"))
+
+proc sampleAspectAsFloat*(self:Producer):float =
+  self.getFloat("aspect_ratio")
+
+#[
+(key: "meta.media.sample_aspect_num", value: "8")
+(key: "meta.media.sample_aspect_den", value: "9")
+(key: "aspect_ratio", value: "0,888889")
+
+]#
 #[
 proc mlt_producer_init*(self: mlt_producer; child: pointer): cint
 
